@@ -1,3 +1,3 @@
-export interface IInputService { 
+export interface IInputService {
 
 }
