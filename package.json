@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jazzapp": "^0.1.8"
+    "jazzapp": "^0.1.11"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",

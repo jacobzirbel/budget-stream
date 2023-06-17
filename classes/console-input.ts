@@ -10,8 +10,6 @@ export class ConsoleInput implements JDependency, IInputService {
   
   async test() {
     console.log("ConsoleInput.test()");
-    let b = await this.prompter.ask("hello");
-    console.log("input: " + b);
   }
 
   destroy?: (() => void) | undefined;

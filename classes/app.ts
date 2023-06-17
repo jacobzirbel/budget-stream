@@ -5,6 +5,10 @@ import { GoogleAuthenticator } from "./google-authenticator";
 import { InputController } from "./input-controller";
 import { SpreadsheetService } from "./spreadsheet-service";
 import { Validator } from "./validator";
+import dotenv from 'dotenv';
+import * as path from 'path';
+
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 export class App extends JApp {
   constructor() {
