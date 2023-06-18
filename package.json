@@ -6,12 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p .",
-    "tester": "npm run build && node ./dist/scripts/tester.js"
+    "tester": "ts-node scripts/tester.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jazzapp": "^0.1.11"
+    "@google-cloud/local-auth": "^2.1.0",
+    "googleapis": "^105.0.0",
+    "jazzapp": "^0.1.14"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",
