@@ -1,0 +1,15 @@
+export enum CurrentHeaders {
+  Income = 'Income',
+  Taxes = 'Taxes',
+  Health = 'Health',
+  Ins = 'Ins',
+  Rent = 'Rent',
+  Phone = 'Phone',
+  Travel = 'Travel',
+  Car = 'Car',
+  Grocery = 'Grocery',
+  Fast = 'Fast',
+  Drugs = 'Drugs',
+  Gift = 'Gift',
+  Misc = 'Misc',
+}

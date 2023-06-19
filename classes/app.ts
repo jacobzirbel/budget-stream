@@ -1,4 +1,4 @@
-import { JApp } from "jazzapp";
+import { BASE_INIT_ARGS, JApp } from "jazzapp";
 import { BudgetService } from "./budget-service";
 import { ConsoleInput } from "./console-input";
 import { GoogleAuthenticator } from "./google-authenticator";
@@ -7,15 +7,18 @@ import { SpreadsheetService } from "./spreadsheet-service";
 import { Validator } from "./validator";
 
 export class App extends JApp {
-  constructor() {
+  constructor(isTesting: boolean) {
     super();
+    const baseArgs: BASE_INIT_ARGS = {
+      isTesting
+    }
     this.extendedDependencies = [
-      { class: BudgetService },
-      { class: ConsoleInput },
-      { class: GoogleAuthenticator },
-      { class: InputController },
-      { class: SpreadsheetService },
-      { class: Validator },
+      { class: BudgetService, initArgs: baseArgs },
+      { class: ConsoleInput, initArgs: baseArgs },
+      { class: GoogleAuthenticator, initArgs: baseArgs },
+      { class: InputController, initArgs: baseArgs },
+      { class: SpreadsheetService, initArgs: baseArgs },
+      { class: Validator, initArgs: baseArgs },
     ]
 
     this.registerDependencies(this.extendedDependencies);
