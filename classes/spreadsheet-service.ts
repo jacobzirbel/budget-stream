@@ -1,21 +1,18 @@
-import { BASE_INIT_ARGS, JDependency, JUtilities } from "jazzapp";
-import { GoogleAuthenticator } from "./google-authenticator";
+import { sheets_v4 } from "googleapis";
+import { JDependency, JUtilities } from "jazzapp";
 import { singleton } from "tsyringe";
-import { google, sheets_v4 } from "googleapis";
-import { CurrentHeaders, TEST_SPREADSHEET } from '../config';
-import { JWT } from "google-auth-library";
+import { TEST_SPREADSHEET } from '../config';
+import { SheetsApi } from "./sheets-api";
 
 @singleton()
 export class SpreadsheetService extends JDependency {
-  sheetId: string;
-  private auth: JWT;
+  private sheetId: string;
   private service: sheets_v4.Sheets;
 
-  constructor(private googleAuth: GoogleAuthenticator, private utils: JUtilities) {
+  constructor(private sheetsApi: SheetsApi, private utils: JUtilities) {
     super();
     this.sheetId = this.utils.getSecret(TEST_SPREADSHEET);
-    this.auth = this.googleAuth.getAuth();
-    this.service = google.sheets({ version: 'v4', auth: this.auth });
+    this.service = this.sheetsApi.getService();
   }
 
   async getSheetData(sheetName: string): Promise<string[][]> {
@@ -27,7 +24,6 @@ export class SpreadsheetService extends JDependency {
     if (!sheet.data.values) {
       throw new Error('getSheetData: No data found in spreadsheet!');
     }
-
     return sheet.data.values;
   }
 
@@ -37,6 +33,7 @@ export class SpreadsheetService extends JDependency {
       range: await this.getColumnRangeByHeader(sheetName, header),
     });
 
+
     if (!sheet.data.values) {
       throw new Error('getColumnData: No data found in spreadsheet!');
     }
@@ -44,8 +41,30 @@ export class SpreadsheetService extends JDependency {
     if (sheet.data.values.some(x => x.length > 1)) {
       throw new Error('getColumnData: More than one column found!');
     }
+    return sheet.data.values.map(x => x[0] ?? null);
+  }
 
-    return sheet.data.values.flat();
+  async addDataToColumnByHeader(sheetName: string, header: string, newData: string | number) {
+    const columnData = await this.getColumnData(sheetName, header);
+    const columnRange = await this.getColumnRangeByHeader(sheetName, header);
+    const firstEmptyRowIdx = columnData.findIndex(x => !x);
+    const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
+    const headerRowStr = columnRange.split('!')[1].match(/\d+/);
+  
+    if (!headerRowStr) {
+      throw new Error('addDataToColumnByHeader: Header row not found!');
+    }
+
+    const headerRowNum = headerRowStr[0].match(/\d+/)![0];
+
+    const rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
+    console.log({rangeToUpdate});
+    await this.service.spreadsheets.values.update({
+      spreadsheetId: this.sheetId,
+      range: rangeToUpdate,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [[newData]] }
+    });
   }
 
   private async getColumnRangeByHeader(sheetName: string, header: string): Promise<string> {
@@ -62,15 +81,15 @@ export class SpreadsheetService extends JDependency {
     return `${headerAddress}:${columnLetter}`;
   }
 
-  getCellAddress(colIndex: number, rowIndex: number, sheetName: string = ''): string {
+  private getCellAddress(colIndex: number, rowIndex: number, sheetName: string = ''): string {
     return `${sheetName ? sheetName + '!' : ''}${this.getColumnLetter(colIndex)}${this.getRowNumber(rowIndex)}`;
   }
 
-  getColumnLetter(colIndex: number): string {
+  private getColumnLetter(colIndex: number): string {
     return String.fromCharCode('A'.charCodeAt(0) + colIndex);
   }
 
-  getRowNumber(rowIndex: number): string {
+  private getRowNumber(rowIndex: number): string {
     return (rowIndex + 1).toString();
   }
 
