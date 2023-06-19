@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "ju": "npm install jazzapp@latest",
     "build": "tsc -p .",
     "tester": "ts-node scripts/tester.ts"
   },
@@ -13,7 +14,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "googleapis": "^105.0.0",
-    "jazzapp": "^0.1.14"
+    "jazzapp": "^0.1.17"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",

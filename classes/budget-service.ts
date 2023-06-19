@@ -1,6 +1,6 @@
 import { JDependency } from "jazzapp";
 
-export class BudgetService implements JDependency {
+export class BudgetService extends JDependency {
   test() {
     console.log("BudgetService.test()");
   }

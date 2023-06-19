@@ -3,9 +3,9 @@ import { IInputService } from "../interfaces/input-service.model";
 import { singleton } from "tsyringe";
 
 @singleton()
-export class ConsoleInput implements JDependency, IInputService {
+export class ConsoleInput extends JDependency implements IInputService {
   constructor(private prompter: JPrompter) {
-
+    super();
   }
   
   async test() {
