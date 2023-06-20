@@ -13,11 +13,11 @@ export enum CurrentHeader {
 
 export function getCurrentColumnOffset(header: CurrentHeader) {
   switch (header) {
-    case CurrentHeader.Misc: 
-      return 3;
-    case CurrentHeader.Health:
-      return 8;
-    default:
-      return 0;
+  case CurrentHeader.Misc: 
+    return 3;
+  case CurrentHeader.Health:
+    return 8;
+  default:
+    return 0;
   }
 }

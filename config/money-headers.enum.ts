@@ -18,4 +18,4 @@ export const isCredit = (header: MoneyHeaders) => [
   MoneyHeaders.Chase,
   MoneyHeaders.Prime,
   MoneyHeaders.Verizon
-].includes(header)
+].includes(header);

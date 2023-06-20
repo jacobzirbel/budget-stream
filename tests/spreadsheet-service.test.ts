@@ -24,7 +24,7 @@ describe('SpreadsheetService', () => {
 
     mockUtils = {
       getSecret: () => ''
-    }
+    };
 
     spreadsheetService = new SpreadsheetService(apiService as any, mockUtils);
   });
@@ -77,7 +77,7 @@ const TABLE: [string | null, string | null, string | null, string | null][] = [
   [null, null, null, null],
   [null, '1111', '2222', '3333'],
   [null, null, null, null],
-]
+];
 
 function getService(table: string[][]) {
   return {
@@ -88,7 +88,7 @@ function getService(table: string[][]) {
             data: {
               values: parseRange(args.range, table)
             }
-          }
+          };
         },
         update: async (args: { spreadsheetId: string; range: string; valueInputOption: string; requestBody: { values: string[][]; }; }) => {
           const range = args.range;
@@ -112,7 +112,7 @@ function getService(table: string[][]) {
         }
       }
     }
-  }
+  };
 }
 
 function parseRange(range: string, table: string[][]): string[][] {
@@ -129,11 +129,11 @@ function parseRange(range: string, table: string[][]): string[][] {
   const endRow = endCoords[1] ?? 1000;
 
   const rows = TABLE.slice(+startRow, +endRow + 1);
-  let ret: string[][] = [];
+  const ret: string[][] = [];
 
-  for (let row of rows) {
+  for (const row of rows) {
     if (!row.some(x => !!x)) {
-      let emptyArr: string[] = [];
+      const emptyArr: string[] = [];
       ret.push(emptyArr);
     } else {
       ret.push(row.slice(+startCol, +endCol + 1).map(x => x === null ? '' : x));
@@ -170,7 +170,7 @@ describe('TestHelpers', () => {
       { address: 'A1', expected: [0, 0] },
       { address: 'B2', expected: [1, 1] },
       { address: 'C3', expected: [2, 2] },
-    ]
+    ];
 
     testCases.forEach(testCase => {
       expect(parseAddress(testCase.address)).toEqual(testCase.expected);
