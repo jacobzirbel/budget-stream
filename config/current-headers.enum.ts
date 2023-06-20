@@ -1,4 +1,4 @@
-export enum CurrentHeader {
+export enum CategoryOption {
   Health = 'Health',
   Rent = 'Rent',
   Phone = 'Phone',
@@ -9,13 +9,14 @@ export enum CurrentHeader {
   Drugs = 'Drugs',
   Gift = 'Gift',
   Misc = 'Misc',
+  Exit = 'Exit',
 }
 
-export function getCurrentColumnOffset(header: CurrentHeader) {
+export function getCurrentColumnOffset(header: CategoryOption) {
   switch (header) {
-  case CurrentHeader.Misc: 
+  case CategoryOption.Misc: 
     return 3;
-  case CurrentHeader.Health:
+  case CategoryOption.Health:
     return 8;
   default:
     return 0;

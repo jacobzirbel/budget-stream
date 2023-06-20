@@ -2,7 +2,7 @@ import { get } from 'http';
 import { SpreadsheetService } from '../classes/spreadsheet-service';
 
 describe('SpreadsheetService', () => {
-  let spreadsheetService: any;
+  let spreadsheetService: SpreadsheetService;
   let apiService: {
     getService: () => {
       spreadsheets: {
@@ -34,7 +34,7 @@ describe('SpreadsheetService', () => {
   });
 
   test('should get sheet data', async () => {
-    const data = await spreadsheetService.getSheetData('Test');
+    const data = await spreadsheetService.getFullSheetData('Test');
 
     expect(data).toEqual([
       ['', 'nothing', '', 'random'],
@@ -51,32 +51,38 @@ describe('SpreadsheetService', () => {
   });
 
   test('should update column', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED');
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED']);
     expect(table[4][2]).toEqual('UPDATED');
   });
 
   test('should update column with offset 1', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED', 1);
-    expect(table[4][2]).toEqual('UPDATED');
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED1'], 1);
+    expect(table[4][2]).toEqual('UPDATED1');
   });
 
-  test.only('should update column with offset 2', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED', 3);
-    expect(table[6][2]).toEqual('UPDATED');
+  test('should update column with offset 2', async () => {
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED3'], 3);
+    expect(table[6][2]).toEqual('UPDATED3');
+  });
+
+  test('should update two columns', async () => {
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header1', ['FIRST', 'SECOND'], 3);
+    expect(table[6][1]).toEqual('FIRST');
+    expect(table[6][2]).toEqual('SECOND');
   });
 });
 
 const TABLE: [string | null, string | null, string | null, string | null][] = [
-  [null, 'nothing', null, 'random'],
-  ['1', '2', '3', '4'],
-  [null, 'Header1', 'Header2', 'Header3'],
-  [null, '1', '2', '3'],
-  [null, '11', null, '33'],
-  [null, '111', '222', '333'],
-  [null, null, null, null],
-  [null, null, null, null],
-  [null, '1111', '2222', '3333'],
-  [null, null, null, null],
+  [null, 'nothing', null, 'random'], // 0
+  ['1', '2', '3', '4'], // 1
+  [null, 'Header1', 'Header2', 'Header3'], // 2
+  [null, '1', '2', '3'], // 3
+  [null, '11', null, '33'], // 4
+  [null, '111', '222', '333'], // 5
+  [null, null, null, null], // 6 
+  [null, null, null, null], // 7 
+  [null, '1111', '2222', '3333'], // 8
+  [null, null, null, null], // 9
 ];
 
 function getService(table: string[][]) {

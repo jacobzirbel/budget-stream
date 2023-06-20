@@ -4,6 +4,16 @@ import { singleton } from 'tsyringe';
 import { MONEY_SPREADSHEET, TEST_SPREADSHEET } from '../config';
 import { SheetsApi } from './sheets-api';
 
+interface ExtraOptions {
+  extraOffset?: number;
+  numberColumns?: number;
+}
+
+interface ExtraOptionsGuaranteed {
+  extraOffset: number;
+  numberColumns: number;
+}
+
 @singleton()
 export class SpreadsheetService extends JDependency {
   private sheetId: string;
@@ -27,26 +37,28 @@ export class SpreadsheetService extends JDependency {
     return sheet.data.values;
   }
 
-  async getColumnDataByHeader(sheetName: string, header: string, extraOffset = 0): Promise<string[][]> {
+  async getColumnDataByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string[][]> {
+    const { extraOffset, numberColumns } = this.parseOtherOptions(otherOptions);
     const sheet = await this.service.spreadsheets.values.get({
       spreadsheetId: this.sheetId,
-      range: await this.getColumnRangeByHeader(sheetName, header, extraOffset),
+      range: await this.getColumnRangeByHeader(sheetName, header, otherOptions),
     });
 
     if (!sheet.data.values) {
       sheet.data.values = [];
     }
 
-    if (sheet.data.values.some(x => x.length > 1)) {
-      throw new Error('getColumnData: More than one column found!');
+    if (sheet.data.values.some(x => x.length > numberColumns)) {
+      throw new Error(`getColumnData: More than ${numberColumns} column found!`);
     }
-    return sheet.data.values.map(x => x[0] ?? null);
+    return sheet.data.values;
   }
 
-  async addDataToColumnByHeader(sheetName: string, header: string, newData: string | number, extraOffset = 0) {
-    const columnData = await this.getColumnDataByHeader(sheetName, header, extraOffset);
-    const columnRange = await this.getColumnRangeByHeader(sheetName, header, extraOffset);
-    const firstEmptyRowIdx = columnData.findIndex(x => !x);
+  async addDataToColumnByHeader(sheetName: string, header: string, newData: (string | number)[], extraOffset = 0) {
+    const otherOptions = { extraOffset, numberColumns: newData.length };
+    const columnData = await this.getColumnDataByHeader(sheetName, header, otherOptions);
+    const columnRange = await this.getColumnRangeByHeader(sheetName, header, otherOptions);
+    const firstEmptyRowIdx = columnData.findIndex(x => x.every(y => !y));
     const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
     const headerRowStr = columnRange.split('!')[1].match(/\d+/);
 
@@ -67,11 +79,12 @@ export class SpreadsheetService extends JDependency {
       spreadsheetId: this.sheetId,
       range: rangeToUpdate,
       valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [[newData]] }
+      requestBody: { values: [newData] }
     });
   }
 
-  private async getColumnRangeByHeader(sheetName: string, header: string, extraOffset = 0): Promise<string> {
+  private async getColumnRangeByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string> {
+    const { extraOffset, numberColumns } = this.parseOtherOptions(otherOptions);
     const data = await this.getFullSheetData(sheetName);
     const headerRow = data.findIndex(row => row.includes(header));
 
@@ -81,7 +94,7 @@ export class SpreadsheetService extends JDependency {
 
     const headerCol = data[headerRow].findIndex(col => col === header);
     const headerAddress = this.getCellAddress(headerCol, headerRow + extraOffset, sheetName);
-    const columnLetter = this.getColumnLetter(headerCol);
+    const columnLetter = this.getColumnLetter(headerCol + numberColumns - 1);
     return `${headerAddress}:${columnLetter}`;
   }
 
@@ -95,6 +108,13 @@ export class SpreadsheetService extends JDependency {
 
   private getRowNumber(rowIndex: number): string {
     return (rowIndex + 1).toString();
+  }
+
+  private parseOtherOptions(otherOptions: ExtraOptions): ExtraOptionsGuaranteed {
+    return {
+      extraOffset: otherOptions.extraOffset ?? 0,
+      numberColumns: otherOptions.numberColumns ?? 1,
+    }
   }
 
   destroy?: (() => void) | undefined;
