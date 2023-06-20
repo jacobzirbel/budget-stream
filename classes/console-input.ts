@@ -55,9 +55,14 @@ export class ConsoleInput extends JDependency implements IInputService {
 
   private async getCategoryData(amount: number, category: CategoryOption): Promise<(number | string)[]> {
     let ret: (number | string)[] = [amount];
-    if (category === CategoryOption.Misc) {
-      const note = await this.prompter.question('Note?');
+    if ([CategoryOption.Misc, CategoryOption.Rent].includes(category)) {
+      const note = await this.prompter.question('Category note?');
       ret.push(note);
+    }
+
+    if (category === CategoryOption.Phone) {
+      const note = await this.prompter.question('Phone note?');
+      ret.unshift(note);
     }
 
     return ret;
@@ -66,7 +71,7 @@ export class ConsoleInput extends JDependency implements IInputService {
   private async getMoneySourceData(amount: number, moneySource: MoneyOption): Promise<(number | string)[]> {
     let ret: (number | string)[] = [amount * (isCredit(moneySource) ? 1 : -1)];
     if (moneySource === MoneyOption.Other) {
-      const note = await this.prompter.question('Note?');
+      const note = await this.prompter.question('Other source note?');
       ret.push(note);
     }
 
