@@ -50,9 +50,19 @@ describe('SpreadsheetService', () => {
     ]);
   });
 
-  test.only('should update column', async () => {
+  test('should update column', async () => {
     await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED');
     expect(table[4][2]).toEqual('UPDATED');
+  });
+
+  test('should update column with offset 1', async () => {
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED', 1);
+    expect(table[4][2]).toEqual('UPDATED');
+  });
+
+  test.only('should update column with offset 2', async () => {
+    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', 'UPDATED', 3);
+    expect(table[6][2]).toEqual('UPDATED');
   });
 });
 

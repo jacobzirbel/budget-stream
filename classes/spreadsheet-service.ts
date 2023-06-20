@@ -15,7 +15,7 @@ export class SpreadsheetService extends JDependency {
     this.service = this.sheetsApi.getService();
   }
 
-  async getSheetData(sheetName: string): Promise<string[][]> {
+  async getFullSheetData(sheetName: string): Promise<string[][]> {
     const sheet = await this.service.spreadsheets.values.get({
       spreadsheetId: this.sheetId,
       range: sheetName,
@@ -27,7 +27,7 @@ export class SpreadsheetService extends JDependency {
     return sheet.data.values;
   }
 
-  async getColumnData(sheetName: string, header: string, extraOffset = 0): Promise<string[][]> {
+  async getColumnDataByHeader(sheetName: string, header: string, extraOffset = 0): Promise<string[][]> {
     const sheet = await this.service.spreadsheets.values.get({
       spreadsheetId: this.sheetId,
       range: await this.getColumnRangeByHeader(sheetName, header, extraOffset),
@@ -44,20 +44,25 @@ export class SpreadsheetService extends JDependency {
   }
 
   async addDataToColumnByHeader(sheetName: string, header: string, newData: string | number, extraOffset = 0) {
-    const columnData = await this.getColumnData(sheetName, header, extraOffset);
+    const columnData = await this.getColumnDataByHeader(sheetName, header, extraOffset);
     const columnRange = await this.getColumnRangeByHeader(sheetName, header, extraOffset);
     const firstEmptyRowIdx = columnData.findIndex(x => !x);
     const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
     const headerRowStr = columnRange.split('!')[1].match(/\d+/);
-  
+
     if (!headerRowStr) {
       throw new Error('addDataToColumnByHeader: Header row not found!');
     }
 
-    const headerRowNum = headerRowStr[0].match(/\d+/)![0];
+    const headerRowNumStr = headerRowStr[0].match(/\d+/)
 
+    if (!headerRowNumStr) {
+      throw new Error('addDataToColumnByHeader: Header row not found!');
+    }
+
+    const headerRowNum = headerRowNumStr[0];
     const rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
-  
+
     await this.service.spreadsheets.values.update({
       spreadsheetId: this.sheetId,
       range: rangeToUpdate,
@@ -67,7 +72,7 @@ export class SpreadsheetService extends JDependency {
   }
 
   private async getColumnRangeByHeader(sheetName: string, header: string, extraOffset = 0): Promise<string> {
-    const data = await this.getSheetData(sheetName);
+    const data = await this.getFullSheetData(sheetName);
     const headerRow = data.findIndex(row => row.includes(header));
 
     if (headerRow === -1) {
