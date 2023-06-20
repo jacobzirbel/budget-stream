@@ -14,7 +14,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "googleapis": "^105.0.0",
-    "jazzapp": "^0.1.17"
+    "jazzapp": "^0.1.20"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",

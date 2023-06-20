@@ -1,8 +1,5 @@
-export enum CurrentHeaders {
-  Income = 'Income',
-  Taxes = 'Taxes',
+export enum CurrentHeader {
   Health = 'Health',
-  Ins = 'Ins',
   Rent = 'Rent',
   Phone = 'Phone',
   Travel = 'Travel',
@@ -12,4 +9,15 @@ export enum CurrentHeaders {
   Drugs = 'Drugs',
   Gift = 'Gift',
   Misc = 'Misc',
+}
+
+export function getCurrentColumnOffset(header: CurrentHeader) {
+  switch (header) {
+    case CurrentHeader.Misc: 
+      return 3;
+    case CurrentHeader.Health:
+      return 8;
+    default:
+      return 0;
+  }
 }
