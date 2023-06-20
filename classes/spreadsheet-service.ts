@@ -1,8 +1,8 @@
-import { sheets_v4 } from "googleapis";
-import { JDependency, JUtilities } from "jazzapp";
-import { singleton } from "tsyringe";
+import { sheets_v4 } from 'googleapis';
+import { JDependency, JUtilities } from 'jazzapp';
+import { singleton } from 'tsyringe';
 import { MONEY_SPREADSHEET, TEST_SPREADSHEET } from '../config';
-import { SheetsApi } from "./sheets-api";
+import { SheetsApi } from './sheets-api';
 
 @singleton()
 export class SpreadsheetService extends JDependency {
@@ -54,7 +54,7 @@ export class SpreadsheetService extends JDependency {
       throw new Error('addDataToColumnByHeader: Header row not found!');
     }
 
-    const headerRowNumStr = headerRowStr[0].match(/\d+/)
+    const headerRowNumStr = headerRowStr[0].match(/\d+/);
 
     if (!headerRowNumStr) {
       throw new Error('addDataToColumnByHeader: Header row not found!');
@@ -85,7 +85,7 @@ export class SpreadsheetService extends JDependency {
     return `${headerAddress}:${columnLetter}`;
   }
 
-  private getCellAddress(colIndex: number, rowIndex: number, sheetName: string = ''): string {
+  private getCellAddress(colIndex: number, rowIndex: number, sheetName = ''): string {
     return `${sheetName ? sheetName + '!' : ''}${this.getColumnLetter(colIndex)}${this.getRowNumber(rowIndex)}`;
   }
 

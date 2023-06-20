@@ -1,8 +1,8 @@
-import { JDependency } from "jazzapp";
+import { JDependency } from 'jazzapp';
 
 export class Validator extends JDependency {
   test() {
-    console.log("Validator.test()");
+    console.log('Validator.test()');
   }
 
   destroy?: (() => void) | undefined;

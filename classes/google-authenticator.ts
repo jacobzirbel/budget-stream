@@ -1,7 +1,7 @@
-import { JDependency } from "jazzapp";
-import { google } from "googleapis";
-import { singleton } from "tsyringe";
-import { JWT } from "google-auth-library";
+import { JDependency } from 'jazzapp';
+import { google } from 'googleapis';
+import { singleton } from 'tsyringe';
+import { JWT } from 'google-auth-library';
 
 @singleton()
 export class GoogleAuthenticator extends JDependency {
@@ -13,7 +13,8 @@ export class GoogleAuthenticator extends JDependency {
   }
 
   private startUp() {
-    const keyPath = "../themoney-4567-4a7e835e50dd.json";
+    const keyPath = '../themoney-4567-4a7e835e50dd.json';
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const keys = require(keyPath);
     this.client = new google.auth.JWT(
       keys.client_email,

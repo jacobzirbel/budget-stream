@@ -1,8 +1,8 @@
-import { JDependency, JPrompter, validCurrency } from "jazzapp";
-import { IInputService } from "../interfaces/input-service.model";
-import { singleton } from "tsyringe";
-import { CurrentHeader, MoneyHeaders as MoneyHeader, getCurrentColumnOffset, isCredit } from "../config";
-import { SpreadsheetService } from "./spreadsheet-service";
+import { JDependency, JPrompter, validCurrency } from 'jazzapp';
+import { IInputService } from '../interfaces/input-service.model';
+import { singleton } from 'tsyringe';
+import { CurrentHeader, MoneyHeaders as MoneyHeader, getCurrentColumnOffset, isCredit } from '../config';
+import { SpreadsheetService } from './spreadsheet-service';
 
 @singleton()
 export class ConsoleInput extends JDependency implements IInputService {
@@ -11,7 +11,7 @@ export class ConsoleInput extends JDependency implements IInputService {
   }
 
   async getExpenses() {
-    let more = true;
+    const more = true;
     while (more) {
       const moneySource = await this.getMoneySource();
       let again = true;
@@ -30,7 +30,7 @@ export class ConsoleInput extends JDependency implements IInputService {
   addExpense(category: CurrentHeader, moneySource: MoneyHeader, amount: number) {
     const categoryOffset = getCurrentColumnOffset(category);
     this.spreadsheetService.addDataToColumnByHeader('Current', category, amount, categoryOffset);
-    this.spreadsheetService.addDataToColumnByHeader('Money', moneySource, amount * (isCredit(moneySource) ? 1 : -1), 16)
+    this.spreadsheetService.addDataToColumnByHeader('Money', moneySource, amount * (isCredit(moneySource) ? 1 : -1), 16);
   }
 
   async getMoneySource() {

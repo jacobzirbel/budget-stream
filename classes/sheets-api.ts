@@ -1,7 +1,7 @@
-import { google, sheets_v4 } from "googleapis";
-import { JDependency } from "jazzapp";
-import { singleton } from "tsyringe";
-import { GoogleAuthenticator } from "./google-authenticator";
+import { google, sheets_v4 } from 'googleapis';
+import { JDependency } from 'jazzapp';
+import { singleton } from 'tsyringe';
+import { GoogleAuthenticator } from './google-authenticator';
 
 @singleton()
 export class SheetsApi extends JDependency {
