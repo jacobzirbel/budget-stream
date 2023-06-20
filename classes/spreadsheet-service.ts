@@ -11,7 +11,7 @@ export class SpreadsheetService extends JDependency {
 
   constructor(private sheetsApi: SheetsApi, private utils: JUtilities) {
     super();
-    this.sheetId = this.utils.getSecret(MONEY_SPREADSHEET);
+    this.sheetId = this.utils.getSecret(TEST_SPREADSHEET);
     this.service = this.sheetsApi.getService();
   }
 
@@ -49,7 +49,7 @@ export class SpreadsheetService extends JDependency {
     const firstEmptyRowIdx = columnData.findIndex(x => !x);
     const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
     const headerRowStr = columnRange.split('!')[1].match(/\d+/);
-
+  
     if (!headerRowStr) {
       throw new Error('addDataToColumnByHeader: Header row not found!');
     }
@@ -57,6 +57,7 @@ export class SpreadsheetService extends JDependency {
     const headerRowNum = headerRowStr[0].match(/\d+/)![0];
 
     const rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
+  
     await this.service.spreadsheets.values.update({
       spreadsheetId: this.sheetId,
       range: rangeToUpdate,
