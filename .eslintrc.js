@@ -53,5 +53,13 @@ module.exports = {
       'always'
     ],
     '@typescript-eslint/no-unused-vars': 'off',
+    "no-restricted-globals": ["error", "event", "fdescribe", "console.log"],
+    "no-constant-condition": ["error", { "checkLoops": false }],
+    'no-console': [
+      'error',
+      {
+        allow: ['info', 'warn', 'error'],
+      },
+    ],
   }
 };

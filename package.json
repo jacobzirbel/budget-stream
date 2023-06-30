@@ -7,7 +7,9 @@
     "test": "jest --watch",
     "ju": "npm install jazzapp@latest",
     "build": "tsc -p .",
-    "tester": "ts-node scripts/tester.ts"
+    "tester": "ts-node scripts/tester.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "author": "",
   "license": "ISC",

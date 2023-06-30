@@ -6,6 +6,8 @@ import { SpreadsheetService } from './spreadsheet-service';
 
 @singleton()
 export class ConsoleInput extends JDependency implements IInputService {
+  categories: string[] = [...Object.values(CategoryOption)];
+
   constructor(private prompter: JPrompter, private spreadsheetService: SpreadsheetService) {
     super();
   }
@@ -20,8 +22,12 @@ export class ConsoleInput extends JDependency implements IInputService {
 
       while (true) {
         const amount = await this.getAmount();
+
+        if (amount === 0) {
+          break;
+        }
+
         const category = await this.getCategory();
-        let note: string;
 
         if (category === CategoryOption.Exit) {
           break;
@@ -50,11 +56,14 @@ export class ConsoleInput extends JDependency implements IInputService {
   }
 
   async getCategory(): Promise<CategoryOption> {
-    return await this.prompter.multi(Object.values(CategoryOption), 'Category?') as CategoryOption;
+    const selectedCategory = await this.prompter.multi(this.categories, 'Category?');
+    this.categories = this.categories.filter(category => category !== selectedCategory);
+    this.categories.unshift(selectedCategory);
+    return selectedCategory as CategoryOption;
   }
 
   private async getCategoryData(amount: number, category: CategoryOption): Promise<(number | string)[]> {
-    let ret: (number | string)[] = [amount];
+    const ret: (number | string)[] = [amount];
     if ([CategoryOption.Misc, CategoryOption.Rent].includes(category)) {
       const note = await this.prompter.question('Category note?');
       ret.push(note);
@@ -69,7 +78,7 @@ export class ConsoleInput extends JDependency implements IInputService {
   }
 
   private async getMoneySourceData(amount: number, moneySource: MoneyOption): Promise<(number | string)[]> {
-    let ret: (number | string)[] = [amount * (isCredit(moneySource) ? 1 : -1)];
+    const ret: (number | string)[] = [amount * (isCredit(moneySource) ? 1 : -1)];
     if (moneySource === MoneyOption.Other) {
       const note = await this.prompter.question('Other source note?');
       ret.push(note);

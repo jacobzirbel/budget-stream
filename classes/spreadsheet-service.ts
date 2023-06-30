@@ -114,7 +114,7 @@ export class SpreadsheetService extends JDependency {
     return {
       extraOffset: otherOptions.extraOffset ?? 0,
       numberColumns: otherOptions.numberColumns ?? 1,
-    }
+    };
   }
 
   destroy?: (() => void) | undefined;
