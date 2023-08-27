@@ -109,10 +109,10 @@ function getService(table: string[][]) {
 
           for (let i = startRow; i <= endRow; i++) {
             for (let j = startCol; j <= endCol; j++) {
-              if (!values[i - startRow] || [null, undefined].includes(values[i - startRow][j - startCol] as any)) {
-                continue;
+              const newValue = values[i - startRow]?.[j - startCol];
+              if (newValue !== null && newValue !== undefined) {
+                table[i][j] = newValue;
               }
-              table[i][j] = values[i - startRow][j - startCol];
             }
           }
         }
