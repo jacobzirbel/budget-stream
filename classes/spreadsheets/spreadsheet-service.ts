@@ -1,7 +1,7 @@
 import { sheets_v4 } from 'googleapis';
-import { JDependency, JUtilities } from 'jazzapp';
+import { BASE_INIT_ARGS, JDependency, JUtilities } from 'jazzapp';
 import { singleton } from 'tsyringe';
-import { MONEY_SPREADSHEET, TEST_SPREADSHEET } from '../config';
+import { MONEY_SPREADSHEET, TEST_SPREADSHEET } from '../../config';
 import { SheetsApi } from './sheets-api';
 
 interface ExtraOptions {
@@ -23,6 +23,13 @@ export class SpreadsheetService extends JDependency {
     super();
     this.sheetId = this.utils.getSecret(TEST_SPREADSHEET);
     this.service = this.sheetsApi.getService();
+  }
+
+  async init(args: BASE_INIT_ARGS): Promise<this> {
+    if (!args.isTesting) {
+      this.sheetId = this.utils.getSecret(MONEY_SPREADSHEET);
+    }
+    return this;
   }
 
   async getFullSheetData(sheetName: string): Promise<string[][]> {

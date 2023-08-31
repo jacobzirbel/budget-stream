@@ -1,6 +1,6 @@
 import { JDependency } from "jazzapp";
-import { MoneyOption } from "../header-enums";
-import { IExpenseGenerator, IRawExpense } from "../models/expense.model";
+import { MoneyOption } from "../../header-enums";
+import { IExpenseGenerator, IRawExpense } from "../../models/expense.model";
 import { singleton } from "tsyringe";
 
 @singleton()
@@ -23,6 +23,7 @@ export class ConsoleExpenseGenerator extends JDependency implements IExpenseGene
           context: '',
           source: moneySource,
         }
+
         callback(expense);
       }
     }

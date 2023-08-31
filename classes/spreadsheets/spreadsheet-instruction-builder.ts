@@ -1,5 +1,5 @@
 import { JDependency } from "jazzapp";
-import { IProcessedExpense, ISpreadsheetInstruction } from "../models/expense.model";
+import { IProcessedExpense, ISpreadsheetInstruction } from "../../models/expense.model";
 import { singleton } from "tsyringe";
 
 @singleton()

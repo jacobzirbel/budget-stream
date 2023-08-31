@@ -1,7 +1,7 @@
 import { JDependency, JPrompter, validCurrency } from 'jazzapp';
 import { IInputService } from '../interfaces/input-service.model';
 import { singleton } from 'tsyringe';
-import { SpreadsheetService } from './spreadsheet-service';
+import { SpreadsheetService } from './spreadsheets/spreadsheet-service';
 import { CategoryOption, MoneyOption, getCurrentColumnOffset, isCredit } from '../header-enums';
 
 @singleton()

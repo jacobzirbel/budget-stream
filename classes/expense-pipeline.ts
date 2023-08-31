@@ -1,13 +1,8 @@
-
-// this class will not use dependency injection
-// it will take interfaces for the various steps of the pipeline
-// and use them to perform the work
-
 import { ICategoryDeterminer, INoteGenerator, IRawExpense } from "../models/expense.model";
-import { SpreadsheetInstructionBuilder } from "./spreadsheet-instruction-builder";
-import { SpreadsheetService } from "./spreadsheet-service";
+import { SpreadsheetInstructionBuilder } from "./spreadsheets/spreadsheet-instruction-builder";
+import { SpreadsheetService } from "./spreadsheets/spreadsheet-service";
 
-export class DataPipeline {
+export class ExpensePipeline {
     constructor(
         private noteGenerator: INoteGenerator,
         private categoryDeterminer: ICategoryDeterminer,
