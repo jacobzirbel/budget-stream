@@ -1,8 +1,8 @@
 import { JDependency, JPrompter, validCurrency } from 'jazzapp';
 import { IInputService } from '../interfaces/input-service.model';
 import { singleton } from 'tsyringe';
-import { CategoryOption, MoneyOption, getCurrentColumnOffset, isCredit } from '../config';
 import { SpreadsheetService } from './spreadsheet-service';
+import { CategoryOption, MoneyOption, getCurrentColumnOffset, isCredit } from '../header-enums';
 
 @singleton()
 export class ConsoleInput extends JDependency implements IInputService {

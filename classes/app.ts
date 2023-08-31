@@ -1,5 +1,4 @@
 import { BASE_INIT_ARGS, JApp } from 'jazzapp';
-import { BudgetService } from './budget-service';
 import { ConsoleInput } from './console-input';
 import { GoogleAuthenticator } from './google-authenticator';
 import { SpreadsheetService } from './spreadsheet-service';
@@ -13,7 +12,6 @@ export class App extends JApp {
       isTesting
     };
     this.extendedDependencies = [
-      { class: BudgetService, initArgs: baseArgs },
       { class: ConsoleInput, initArgs: baseArgs },
       { class: GoogleAuthenticator, initArgs: baseArgs },
       { class: SpreadsheetService, initArgs: baseArgs },
