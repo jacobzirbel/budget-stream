@@ -1,18 +1,15 @@
 import { JDependency } from "jazzapp";
 import { CategoryOption } from "../../header-enums";
-import { ICategoryDeterminer, IRawExpense } from "../../models/expense.model";
+import { ExpenseContext, IRawExpense } from "../../models/expense.model";
 import { singleton } from "tsyringe";
 
 @singleton()
-export class CategoryDeterminer extends JDependency implements ICategoryDeterminer {
+export class CategoryDeterminer extends JDependency {
   constructor() {
     super();
   }
 
-  determineCategory(expenseData: IRawExpense) {
-    return {
-      ...expenseData,
-      category: CategoryOption.Car,
-    }
+  determineCategory(context: ExpenseContext): CategoryOption | null {
+    return CategoryOption.Misc;
   };
 }

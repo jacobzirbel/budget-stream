@@ -1,4 +1,6 @@
-import { CategoryOption, MoneyOption } from "../header-enums";
+import { CategoryOption, MoneyOption, Sheet } from "../header-enums";
+
+export type ExpenseContext = string;
 
 export interface IRawExpense {
     amount: number;
@@ -6,7 +8,20 @@ export interface IRawExpense {
     source: MoneyOption;
 }
 
-export type ExpenseContext = string;
+export interface ExpensePart {
+    amount: number;
+    category: CategoryOption;
+}
+
+export interface ExpensePartWithNote extends ExpensePart {
+    note: string;
+    notePosition: 'pre' | 'post';
+}
+
+export interface ExpenseReadyForUpload extends IRawExpense {
+    expenseParts: ExpensePartWithNote[]
+}
+
 
 export interface IExpenseWithCategory extends IRawExpense {
     category: CategoryOption;
@@ -26,21 +41,12 @@ export interface IExpenseGenerator {
 }
 
 export interface INoteGenerator {
-    generateNote: (expense: IExpenseWithCategory) => IExpenseWithNoteAndCategory;
+    generateNote: (expense: ExpensePart) => ExpensePartWithNote 
 }
 
 export interface ISpreadsheetInstruction {
-    sheetName: string;
+    sheetName: Sheet;
     header: CategoryOption | MoneyOption;
     data: (string | number)[];
-    extraOffset: number;
-}
-
-export interface ICategoryDeterminer {
-    determineCategory: (expenseData: IRawExpense) => IExpenseWithCategory;
-}
-
-export interface IExpenseSplitter {
-    // use category determiner to set category on each one
-    splitExpense: (expense: IExpenseWithCategory) => IExpenseWithCategory[];
+    extraOffset?: number | undefined;
 }

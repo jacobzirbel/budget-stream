@@ -9,13 +9,7 @@ import { IExpenseGenerator } from '../models/expense.model';
 
 new App().run(async app => {
   const expenseGenerator: IExpenseGenerator = await app.getDependency(ConsoleExpenseGenerator);
-
-  const dataPipeline = new ExpensePipeline(
-    await app.getDependency(NoteGenerator),
-    await app.getDependency(CategoryDeterminer),
-    await app.getDependency(SpreadsheetInstructionBuilder),
-    await app.getDependency(SpreadsheetService),
-  );
-
+  const dataPipeline = await app.getDependency(ExpensePipeline);
+  
   expenseGenerator.forEachExpense(dataPipeline.run);
 });

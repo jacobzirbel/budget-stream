@@ -1,5 +1,5 @@
 import { JDependency } from "jazzapp";
-import { ICategoryDeterminer, INoteGenerator, IRawExpense } from "../models/expense.model";
+import { IRawExpense } from "../models/expense.model";
 import { SpreadsheetInstructionBuilder } from "./spreadsheets/spreadsheet-instruction-builder";
 import { SpreadsheetService } from "./spreadsheets/spreadsheet-service";
 import { singleton } from "tsyringe";
@@ -17,14 +17,16 @@ export class ExpensePipeline extends JDependency {
 
   run(rawExpense: IRawExpense) {
     // process the data
-    const processedExpenses = this.expenseProcessor.processExpense(rawExpense);
+    const processedExpense = this.expenseProcessor.processExpense(rawExpense);
 
-    
     // build the instructions
-    const instruction = this.spreadsheetInstructionBuilder.buildInstruction(processedExpense);
+    const instructions = this.spreadsheetInstructionBuilder.buildInstructions(processedExpense);
 
     // send the instructions to the spreadsheet service
-    const { sheetName, header, data, extraOffset } = instruction;
-    this.spreadsheetService.addDataToColumnByHeader(sheetName, header, data, extraOffset);
+    // todo batch update
+    instructions.forEach(instruction => {
+      const { sheetName, header, data, extraOffset } = instruction;
+      this.spreadsheetService.addDataToColumnByHeader(sheetName, header, data, extraOffset);
+    });
   }
 }
