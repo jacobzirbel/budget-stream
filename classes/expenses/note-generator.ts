@@ -3,7 +3,7 @@ import { IExpenseWithCategory, IExpenseWithNoteAndCategory, INoteGenerator } fro
 import { singleton } from "tsyringe";
 
 @singleton()
-export class BasicNoteGenerator extends JDependency implements INoteGenerator {
+export class NoteGenerator extends JDependency implements INoteGenerator {
   constructor() {
     super();
   }

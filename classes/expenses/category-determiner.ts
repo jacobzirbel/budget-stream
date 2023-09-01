@@ -4,7 +4,7 @@ import { ICategoryDeterminer, IRawExpense } from "../../models/expense.model";
 import { singleton } from "tsyringe";
 
 @singleton()
-export class BasicCategoryDeterminer extends JDependency implements ICategoryDeterminer {
+export class CategoryDeterminer extends JDependency implements ICategoryDeterminer {
   constructor() {
     super();
   }

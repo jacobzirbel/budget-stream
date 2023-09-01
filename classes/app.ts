@@ -4,8 +4,8 @@ import { GoogleAuthenticator } from './spreadsheets/google-authenticator';
 import { SpreadsheetService } from './spreadsheets/spreadsheet-service';
 import { SheetsApi } from './spreadsheets/sheets-api';
 import { SpreadsheetInstructionBuilder } from './spreadsheets/spreadsheet-instruction-builder';
-import { BasicCategoryDeterminer } from './basic-strategy/basic-category-determiner';
-import { BasicNoteGenerator } from './basic-strategy/basic-note-generator';
+import { CategoryDeterminer } from './expenses/category-determiner';
+import { NoteGenerator } from './expenses/note-generator';
 
 export class App extends JApp {
   constructor() {
@@ -21,8 +21,8 @@ export class App extends JApp {
       { class: SpreadsheetService, initArgs: baseArgs },
       { class: SpreadsheetInstructionBuilder, initArgs: baseArgs },
       { class: SheetsApi, initArgs: baseArgs },
-      { class: BasicCategoryDeterminer, initArgs: baseArgs },
-      { class: BasicNoteGenerator, initArgs: baseArgs },
+      { class: CategoryDeterminer, initArgs: baseArgs },
+      { class: NoteGenerator, initArgs: baseArgs },
     ];
 
     this.registerDependencies(this.extendedDependencies);

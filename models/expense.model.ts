@@ -2,9 +2,11 @@ import { CategoryOption, MoneyOption } from "../header-enums";
 
 export interface IRawExpense {
     amount: number;
-    context: string;
+    context: ExpenseContext;
     source: MoneyOption;
 }
+
+export type ExpenseContext = string;
 
 export interface IExpenseWithCategory extends IRawExpense {
     category: CategoryOption;
@@ -36,4 +38,9 @@ export interface ISpreadsheetInstruction {
 
 export interface ICategoryDeterminer {
     determineCategory: (expenseData: IRawExpense) => IExpenseWithCategory;
+}
+
+export interface IExpenseSplitter {
+    // use category determiner to set category on each one
+    splitExpense: (expense: IExpenseWithCategory) => IExpenseWithCategory[];
 }

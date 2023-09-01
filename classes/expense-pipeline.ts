@@ -1,26 +1,30 @@
+import { JDependency } from "jazzapp";
 import { ICategoryDeterminer, INoteGenerator, IRawExpense } from "../models/expense.model";
 import { SpreadsheetInstructionBuilder } from "./spreadsheets/spreadsheet-instruction-builder";
 import { SpreadsheetService } from "./spreadsheets/spreadsheet-service";
+import { singleton } from "tsyringe";
+import { ExpenseProcessor } from "./expenses/expense-processor";
 
-export class ExpensePipeline {
-    constructor(
-        private noteGenerator: INoteGenerator,
-        private categoryDeterminer: ICategoryDeterminer,
-        private spreadsheetInstructionBuilder: SpreadsheetInstructionBuilder,
-        private spreadsheetService: SpreadsheetService,
-    ) { }
+@singleton()
+export class ExpensePipeline extends JDependency {
+  constructor(
+    private expenseProcessor: ExpenseProcessor,
+    private spreadsheetInstructionBuilder: SpreadsheetInstructionBuilder,
+    private spreadsheetService: SpreadsheetService,
+  ) {
+    super();
+  }
 
-    run(rawExpense: IRawExpense) {
-        // process the data
-        const expenseWithCategory = this.categoryDeterminer.determineCategory(rawExpense);
-        const expenseWithNoteAndCategory = this.noteGenerator.generateNote(expenseWithCategory);
-        const processedExpense = expenseWithNoteAndCategory;
+  run(rawExpense: IRawExpense) {
+    // process the data
+    const processedExpenses = this.expenseProcessor.processExpense(rawExpense);
 
-        // build the instructions
-        const instruction = this.spreadsheetInstructionBuilder.buildInstruction(processedExpense);
+    
+    // build the instructions
+    const instruction = this.spreadsheetInstructionBuilder.buildInstruction(processedExpense);
 
-        // send the instructions to the spreadsheet service
-        const { sheetName, header, data, extraOffset } = instruction;
-        this.spreadsheetService.addDataToColumnByHeader(sheetName, header, data, extraOffset);
-    }
+    // send the instructions to the spreadsheet service
+    const { sheetName, header, data, extraOffset } = instruction;
+    this.spreadsheetService.addDataToColumnByHeader(sheetName, header, data, extraOffset);
+  }
 }
