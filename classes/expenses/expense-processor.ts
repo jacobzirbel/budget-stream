@@ -13,26 +13,27 @@ export class ExpenseProcessor extends JDependency {
     private expenseSplitter: ExpenseSplitter,
   ) {
     super();
+    console.log('CONSTRUCT PROCESSOR')
   }
 
-  processExpense(rawExpense: IRawExpense): ExpenseReadyForUpload {
-    let category = this.categoryDeterminer.determineCategory('test');
-
-    if (category === null) { // Handle splitting
-      return this.expenseSplitter.splitExpense(rawExpense);
+  async processExpense(rawExpense: IRawExpense): Promise<ExpenseReadyForUpload> {
+    let expenseParts: ExpensePartWithNote[];
+    
+    let category = await this.categoryDeterminer.determineCategory(rawExpense.context);
+    
+    if (category === null) {
+      expenseParts = await this.expenseSplitter.splitExpense(rawExpense);
     } else {
-      return {
-        ...rawExpense,
-        expenseParts: [
-          this.noteGenerator.generateNote({
-            amount: rawExpense.amount,
-            category,
-          })]
-      }
+      const x = await this.noteGenerator.generateNote({
+        amount: rawExpense.amount,
+        category,
+      });
+      expenseParts = [x];
     }
-  }
 
-  getSubAmount(remainingAmount: number) {
-    return remainingAmount < 1 ? remainingAmount : remainingAmount / 2;;
+    return {
+      ...rawExpense,
+      expenseParts: expenseParts
+    }
   }
 }

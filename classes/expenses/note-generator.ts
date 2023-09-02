@@ -1,21 +1,32 @@
-import { JDependency } from "jazzapp";
-import { ExpensePart, ExpensePartWithNote, IExpenseWithCategory, IExpenseWithNoteAndCategory, INoteGenerator } from "../../models/expense.model";
+import { JDependency, JPrompter } from "jazzapp";
+import { ExpensePart, ExpensePartWithNote } from "../../models/expense.model";
 import { singleton } from "tsyringe";
+import { CategoryOption } from "../../header-enums";
 
 @singleton()
-export class NoteGenerator extends JDependency implements INoteGenerator {
-  constructor() {
+export class NoteGenerator extends JDependency {
+  notePositionByCategory: Map<CategoryOption, 'pre' | 'post'> = new Map([
+    [CategoryOption.Misc, 'post'],
+    [CategoryOption.Rent, 'post'],
+    [CategoryOption.Phone, 'pre'],
+  ]);
+
+  constructor(
+    private prompter: JPrompter,
+  ) {
     super();
   }
-  generateNote(expense: ExpensePart): ExpensePartWithNote {
-    return {
-      ...expense,
-      note: 'note from actual logic',
-      notePosition: 'pre'
-    }
-  }
+  async generateNote(expense: ExpensePart): Promise<ExpensePartWithNote> {
+    const notePosition = this.notePositionByCategory.get(expense.category);
 
-  tester() {
-    console.log('basic note generator')
+    if (!!notePosition) {
+      return {
+        ...expense,
+        note: await this.prompter.question(`Enter a note for ${expense.category}:`),
+        notePosition
+      }
+    } else {
+      return expense;
+    }
   }
 }

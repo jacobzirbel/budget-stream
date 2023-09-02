@@ -6,6 +6,10 @@ import { SheetsApi } from './spreadsheets/sheets-api';
 import { SpreadsheetInstructionBuilder } from './spreadsheets/spreadsheet-instruction-builder';
 import { CategoryDeterminer } from './expenses/category-determiner';
 import { NoteGenerator } from './expenses/note-generator';
+import { ConsoleExpenseGenerator } from './expenses/console-expense-generator';
+import { ExpensePipeline } from './expense-pipeline';
+import { ExpenseProcessor } from './expenses/expense-processor';
+import { ExpenseSplitter } from './expenses/expense-splitter';
 
 export class App extends JApp {
   constructor() {
@@ -23,6 +27,10 @@ export class App extends JApp {
       { class: SheetsApi, initArgs: baseArgs },
       { class: CategoryDeterminer, initArgs: baseArgs },
       { class: NoteGenerator, initArgs: baseArgs },
+      { class: ConsoleExpenseGenerator, initArgs: baseArgs },
+      { class: ExpensePipeline, initArgs: baseArgs },
+      { class: ExpenseProcessor, initArgs: baseArgs },
+      { class: ExpenseSplitter, initArgs: baseArgs },
     ];
 
     this.registerDependencies(this.extendedDependencies);

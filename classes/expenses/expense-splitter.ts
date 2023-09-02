@@ -1,25 +1,30 @@
 import { singleton } from "tsyringe";
 import { NoteGenerator } from "./note-generator";
 import { CategoryDeterminer } from "./category-determiner";
-import { JDependency } from "jazzapp";
+import { JDependency, JPrompter, validCurrency } from "jazzapp";
 import { ExpensePart, ExpensePartWithNote, ExpenseReadyForUpload, IProcessedExpense, IRawExpense } from "../../models/expense.model";
 
 @singleton()
 export class ExpenseSplitter extends JDependency {
+  private noteGenerator: NoteGenerator
+  private categoryDeterminer: CategoryDeterminer
+  private prompter: JPrompter
   constructor(
-    private noteGenerator: NoteGenerator,
-    private categoryDeterminer: CategoryDeterminer,
+    // private noteGenerator: NoteGenerator,
+    // private categoryDeterminer: CategoryDeterminer,
+    // private prompter: JPrompter,
   ) {
     super();
   }
 
-  splitExpense(rawExpense: IRawExpense): ExpenseReadyForUpload {
+  async splitExpense(rawExpense: IRawExpense): Promise<ExpensePartWithNote[]> {
+    throw new Error('Not Implemented');
     let remainingAmount = rawExpense.amount;
     let expenseParts: ExpensePartWithNote[] = [];
 
     while (remainingAmount !== 0) {
-      let amountToProcess = this.getSubAmount(remainingAmount);
-      let category = this.categoryDeterminer.determineCategory('test');
+      let amountToProcess = await this.getSubAmount(remainingAmount);
+      let category = await this.categoryDeterminer.determineCategory('test');
 
       if (category === null) {
         throw new Error('Category is null');
@@ -32,19 +37,16 @@ export class ExpenseSplitter extends JDependency {
       }
 
       // Generate note based on this partial expense
-      const partialExpense: ExpensePart = { amount: amountToProcess, category };
-      const expenseWithNoteAndCategory = this.noteGenerator.generateNote(partialExpense);
+      const partialExpense: ExpensePart = { amount: amountToProcess, category: category as any };
+      const expenseWithNoteAndCategory = await this.noteGenerator.generateNote(partialExpense);
 
       expenseParts.push(expenseWithNoteAndCategory);
     }
 
-    return {
-      ...rawExpense,
-      expenseParts,
-    };
+    return expenseParts
   }
 
-  getSubAmount(remainingAmount: number) {
-    return remainingAmount < 1 ? remainingAmount : remainingAmount / 2;
+  async getSubAmount(remainingAmount: number): Promise<number> {
+    return this.prompter.question(`How much of the ${remainingAmount} expense would you like to process?`, validCurrency(true));
   }
 }

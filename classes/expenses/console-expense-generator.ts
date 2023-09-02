@@ -1,15 +1,17 @@
-import { JDependency } from "jazzapp";
+import { JDependency, JPrompter, validCurrency } from "jazzapp";
 import { MoneyOption } from "../../header-enums";
 import { IExpenseGenerator, IRawExpense } from "../../models/expense.model";
 import { singleton } from "tsyringe";
 
 @singleton()
 export class ConsoleExpenseGenerator extends JDependency implements IExpenseGenerator {
-  constructor() {
+  constructor(
+    private prompter: JPrompter,
+  ) {
     super();
   }
 
-  async forEachExpense(callback: (expense: IRawExpense) => void): Promise<void> {
+  async forEachExpense(callback: (expense: IRawExpense) => Promise<void>): Promise<void> {
     while (true) {
       const moneySource = await this.getMoneySourceFromConsole();
       if (!moneySource) break;
@@ -24,16 +26,16 @@ export class ConsoleExpenseGenerator extends JDependency implements IExpenseGene
           source: moneySource,
         }
 
-        callback(expense);
+        await callback(expense);
       }
     }
   }
 
   private async getMoneySourceFromConsole(): Promise<MoneyOption | null> {
-    return MoneyOption.Cash;
+    return await this.prompter.multi(Object.values(MoneyOption), 'Money Source?') as MoneyOption;
   }
 
   private async getAmountFromConsole(moneySource: string): Promise<number | null> {
-    return 0;
+    return await this.prompter.question('Amount?', validCurrency(false));
   }
 }

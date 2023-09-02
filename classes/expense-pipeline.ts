@@ -15,9 +15,9 @@ export class ExpensePipeline extends JDependency {
     super();
   }
 
-  run(rawExpense: IRawExpense) {
+  async run(rawExpense: IRawExpense) {
     // process the data
-    const processedExpense = this.expenseProcessor.processExpense(rawExpense);
+    const processedExpense = await this.expenseProcessor.processExpense(rawExpense);
 
     // build the instructions
     const instructions = this.spreadsheetInstructionBuilder.buildInstructions(processedExpense);

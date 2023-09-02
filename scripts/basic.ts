@@ -1,15 +1,10 @@
 import { App } from '../classes/app';
-import { CategoryDeterminer } from '../classes/expenses/category-determiner';
-import { ConsoleExpenseGenerator } from '../classes/expenses/console-expense-generator';
 import { ExpensePipeline } from '../classes/expense-pipeline';
-import { NoteGenerator } from '../classes/expenses/note-generator';
-import { SpreadsheetInstructionBuilder } from '../classes/spreadsheets/spreadsheet-instruction-builder';
-import { SpreadsheetService } from '../classes/spreadsheets/spreadsheet-service';
-import { IExpenseGenerator } from '../models/expense.model';
+import { ConsoleExpenseGenerator } from '../classes/expenses/console-expense-generator';
 
 new App().run(async app => {
-  const expenseGenerator: IExpenseGenerator = await app.getDependency(ConsoleExpenseGenerator);
+  const expenseGenerator = await app.getDependency(ConsoleExpenseGenerator);
   const dataPipeline = await app.getDependency(ExpensePipeline);
   
-  expenseGenerator.forEachExpense(dataPipeline.run);
+  expenseGenerator.forEachExpense(x => dataPipeline.run(x));
 });

@@ -14,8 +14,8 @@ export interface ExpensePart {
 }
 
 export interface ExpensePartWithNote extends ExpensePart {
-    note: string;
-    notePosition: 'pre' | 'post';
+    note?: string;
+    notePosition?: 'pre' | 'post';
 }
 
 export interface ExpenseReadyForUpload extends IRawExpense {
@@ -37,12 +37,9 @@ export type IExpenseWithNoteAndCategory = IExpenseWithCategory & IExpenseWithNot
 export type IProcessedExpense = IExpenseWithCategory & IExpenseWithNote;
 
 export interface IExpenseGenerator {
-    forEachExpense(callback: (expense: IRawExpense) => void): Promise<void>
+    forEachExpense(callback: (expense: IRawExpense) => Promise<void>): Promise<void>
 }
 
-export interface INoteGenerator {
-    generateNote: (expense: ExpensePart) => ExpensePartWithNote 
-}
 
 export interface ISpreadsheetInstruction {
     sheetName: Sheet;
