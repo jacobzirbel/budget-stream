@@ -1,7 +1,7 @@
-import { JDependency, JPrompter } from "jazzapp";
-import { ExpensePart, ExpensePartWithNote } from "../../models/expense.model";
-import { singleton } from "tsyringe";
-import { CategoryOption } from "../../header-enums";
+import { JDependency, JPrompter } from 'jazzapp';
+import { ExpensePart, ExpensePartWithNote } from '../../models/expense.model';
+import { singleton } from 'tsyringe';
+import { CategoryOption } from '../../header-enums';
 
 @singleton()
 export class NoteGenerator extends JDependency {
@@ -19,12 +19,12 @@ export class NoteGenerator extends JDependency {
   async generateNote(expense: ExpensePart): Promise<ExpensePartWithNote> {
     const notePosition = this.notePositionByCategory.get(expense.category);
 
-    if (!!notePosition) {
+    if (notePosition) {
       return {
         ...expense,
         note: await this.prompter.question(`Enter a note for ${expense.category}:`),
         notePosition
-      }
+      };
     } else {
       return expense;
     }

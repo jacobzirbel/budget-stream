@@ -1,4 +1,4 @@
-import { CategoryOption, MoneyOption, Sheet } from "../header-enums";
+import { CategoryOption, MoneyOption, Sheet } from '../header-enums';
 
 export type ExpenseContext = string;
 

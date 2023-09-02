@@ -1,7 +1,7 @@
-import { JDependency } from "jazzapp";
-import { singleton } from "tsyringe";
-import { Sheet, getCurrentColumnOffset } from "../../header-enums";
-import { ExpenseReadyForUpload, ISpreadsheetInstruction } from "../../models/expense.model";
+import { JDependency } from 'jazzapp';
+import { singleton } from 'tsyringe';
+import { Sheet, getCurrentColumnOffset } from '../../header-enums';
+import { ExpenseReadyForUpload, ISpreadsheetInstruction } from '../../models/expense.model';
 
 @singleton()
 export class SpreadsheetInstructionBuilder extends JDependency {

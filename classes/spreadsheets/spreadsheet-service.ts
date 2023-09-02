@@ -41,6 +41,7 @@ export class SpreadsheetService extends JDependency {
     if (!sheet.data.values) {
       throw new Error('getSheetData: No data found in spreadsheet!');
     }
+
     return sheet.data.values;
   }
 

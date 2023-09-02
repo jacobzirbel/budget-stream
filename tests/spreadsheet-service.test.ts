@@ -1,25 +1,15 @@
-import { get } from 'http';
-import { SpreadsheetService } from '../classes/spreadsheet-service';
+import { SpreadsheetService } from '../classes/spreadsheets/spreadsheet-service';
 
 describe('SpreadsheetService', () => {
   let spreadsheetService: SpreadsheetService;
-  let apiService: {
-    getService: () => {
-      spreadsheets: {
-        values: {
-          get: (arg0: { spreadsheetId: string; range: string; }) => Promise<any>;
-          update: (arg0: { spreadsheetId: string; range: string; valueInputOption: string; requestBody: { values: string[][]; }; }) => Promise<any>;
-        };
-      };
-    };
-  };
+  let apiService: MockApiService;
   let mockUtils: any;
   let table: any;
 
   beforeEach(() => {
     table = JSON.parse(JSON.stringify(TABLE));
     apiService = {
-      getService: () => getService(table)
+      getApiService: () => getService(table)
     };
 
     mockUtils = {
@@ -214,3 +204,15 @@ describe('TestHelpers', () => {
     ]);
   });
 });
+
+
+interface MockApiService {
+  getApiService: () => {
+    spreadsheets: {
+      values: {
+        get: (arg0: { spreadsheetId: string; range: string; }) => Promise<any>;
+        update: (arg0: { spreadsheetId: string; range: string; valueInputOption: string; requestBody: { values: string[][]; }; }) => Promise<any>;
+      };
+    };
+  };
+}

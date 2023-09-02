@@ -1,9 +1,9 @@
-import { JDependency } from "jazzapp";
-import { IRawExpense } from "../models/expense.model";
-import { SpreadsheetInstructionBuilder } from "./spreadsheets/spreadsheet-instruction-builder";
-import { SpreadsheetService } from "./spreadsheets/spreadsheet-service";
-import { singleton } from "tsyringe";
-import { ExpenseProcessor } from "./expenses/expense-processor";
+import { JDependency } from 'jazzapp';
+import { IRawExpense } from '../models/expense.model';
+import { SpreadsheetInstructionBuilder } from './spreadsheets/spreadsheet-instruction-builder';
+import { SpreadsheetService } from './spreadsheets/spreadsheet-service';
+import { singleton } from 'tsyringe';
+import { ExpenseProcessor } from './expenses/expense-processor';
 
 @singleton()
 export class ExpensePipeline extends JDependency {

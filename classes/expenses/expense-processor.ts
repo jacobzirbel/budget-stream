@@ -1,9 +1,9 @@
-import { singleton } from "tsyringe";
-import { NoteGenerator } from "./note-generator";
-import { CategoryDeterminer } from "./category-determiner";
-import { JDependency } from "jazzapp";
-import { ExpensePart, ExpensePartWithNote, ExpenseReadyForUpload, IProcessedExpense, IRawExpense } from "../../models/expense.model";
-import { ExpenseSplitter } from "./expense-splitter";
+import { singleton } from 'tsyringe';
+import { NoteGenerator } from './note-generator';
+import { CategoryDeterminer } from './category-determiner';
+import { JDependency } from 'jazzapp';
+import { ExpensePart, ExpensePartWithNote, ExpenseReadyForUpload, IProcessedExpense, IRawExpense } from '../../models/expense.model';
+import { ExpenseSplitter } from './expense-splitter';
 
 @singleton()
 export class ExpenseProcessor extends JDependency {
@@ -13,14 +13,13 @@ export class ExpenseProcessor extends JDependency {
     private expenseSplitter: ExpenseSplitter,
   ) {
     super();
-    console.log('CONSTRUCT PROCESSOR')
   }
 
   async processExpense(rawExpense: IRawExpense): Promise<ExpenseReadyForUpload> {
     let expenseParts: ExpensePartWithNote[];
     
-    let category = await this.categoryDeterminer.determineCategory(rawExpense.context);
-    
+    const category = await this.categoryDeterminer.determineCategory(rawExpense.context);
+
     if (category === null) {
       expenseParts = await this.expenseSplitter.splitExpense(rawExpense);
     } else {
@@ -34,6 +33,6 @@ export class ExpenseProcessor extends JDependency {
     return {
       ...rawExpense,
       expenseParts: expenseParts
-    }
+    };
   }
 }

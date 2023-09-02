@@ -10,7 +10,7 @@ export class ConsoleInput extends JDependency implements IInputService {
 
   constructor(private prompter: JPrompter, private spreadsheetService: SpreadsheetService) {
     super();
-    throw new Error('dont use this')
+    throw new Error('dont use this');
   }
 
   async getExpenses() {

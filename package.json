@@ -8,7 +8,7 @@
     "ju": "npm install jazzapp@latest",
     "build": "tsc -p .",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint-fix": "eslint . --ext .ts --fix",
     "tester": "ts-node scripts/tester.ts",
     "basic": "ts-node scripts/basic.ts"
   },
