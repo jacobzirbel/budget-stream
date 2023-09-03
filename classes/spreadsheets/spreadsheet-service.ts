@@ -3,14 +3,17 @@ import { BASE_INIT_ARGS, JDependency, JUtilities } from 'jazzapp';
 import { singleton } from 'tsyringe';
 import { MONEY_SPREADSHEET, TEST_SPREADSHEET } from '../../config';
 import { SheetsApi } from './sheets-api';
+import { ISpreadsheetInstruction } from '../../models/expense.model';
 
 interface ExtraOptions {
-  extraOffset?: number;
+  offsetX?: number;
+  offsetY?: number;
   numberColumns?: number;
 }
 
 interface ExtraOptionsGuaranteed {
-  extraOffset: number;
+  offsetX: number;
+  offsetY: number;
   numberColumns: number;
 }
 
@@ -32,40 +35,11 @@ export class SpreadsheetService extends JDependency {
     return this;
   }
 
-  async getFullSheetData(sheetName: string): Promise<string[][]> {
-    const sheet = await this.service.spreadsheets.values.get({
-      spreadsheetId: this.sheetId,
-      range: sheetName,
-    });
-
-    if (!sheet.data.values) {
-      throw new Error('getSheetData: No data found in spreadsheet!');
-    }
-
-    return sheet.data.values;
-  }
-
-  async getColumnDataByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string[][]> {
-    const { extraOffset, numberColumns } = this.parseOtherOptions(otherOptions);
-    const sheet = await this.service.spreadsheets.values.get({
-      spreadsheetId: this.sheetId,
-      range: await this.getColumnRangeByHeader(sheetName, header, otherOptions),
-    });
-
-    if (!sheet.data.values) {
-      sheet.data.values = [];
-    }
-
-    if (sheet.data.values.some(x => x.length > numberColumns)) {
-      throw new Error(`getColumnData: More than ${numberColumns} column found!`);
-    }
-    return sheet.data.values;
-  }
-
-  async addDataToColumnByHeader(sheetName: string, header: string, newData: (string | number)[], extraOffset = 0) {
-    const otherOptions = { extraOffset, numberColumns: newData.length };
+  async addDataToColumnByHeader(instruction: ISpreadsheetInstruction) {
+    const { sheetName, header, data, offsetX, offsetY } = instruction;
+    const otherOptions = { offsetX, offsetY, numberColumns: data.length };
     const columnData = await this.getColumnDataByHeader(sheetName, header, otherOptions);
-    const columnRange = await this.getColumnRangeByHeader(sheetName, header, otherOptions);
+    const columnRange = await this.getColumnRangeAddressByHeader(sheetName, header, otherOptions);
     const firstEmptyRowIdx = columnData.findIndex(x => x.every(y => !y));
     const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
     const headerRowStr = columnRange.split('!')[1].match(/\d+/);
@@ -87,12 +61,43 @@ export class SpreadsheetService extends JDependency {
       spreadsheetId: this.sheetId,
       range: rangeToUpdate,
       valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [newData] }
+      requestBody: { values: [data] }
     });
   }
 
-  private async getColumnRangeByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string> {
-    const { extraOffset, numberColumns } = this.parseOtherOptions(otherOptions);
+  private async getFullSheetData(sheetName: string): Promise<string[][]> {
+    const sheet = await this.service.spreadsheets.values.get({
+      spreadsheetId: this.sheetId,
+      range: sheetName,
+    });
+
+    if (!sheet.data.values) {
+      throw new Error('getSheetData: No data found in spreadsheet!');
+    }
+
+    return sheet.data.values;
+  }
+
+  private async getColumnDataByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string[][]> {
+    const { numberColumns } = this.parseOtherOptions(otherOptions);
+    const sheet = await this.service.spreadsheets.values.get({
+      spreadsheetId: this.sheetId,
+      range: await this.getColumnRangeAddressByHeader(sheetName, header, otherOptions),
+    });
+
+    if (!sheet.data.values) {
+      sheet.data.values = [];
+    }
+
+    if (sheet.data.values.some(x => x.length > numberColumns)) {
+      throw new Error(`getColumnData: More than ${numberColumns} column found!`);
+    }
+
+    return sheet.data.values;
+  }
+
+  private async getColumnRangeAddressByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string> {
+    const { offsetX, offsetY, numberColumns } = this.parseOtherOptions(otherOptions);
     const data = await this.getFullSheetData(sheetName);
     const headerRow = data.findIndex(row => row.includes(header));
 
@@ -101,7 +106,7 @@ export class SpreadsheetService extends JDependency {
     }
 
     const headerCol = data[headerRow].findIndex(col => col === header);
-    const headerAddress = this.getCellAddress(headerCol, headerRow + extraOffset, sheetName);
+    const headerAddress = this.getCellAddress(headerCol, headerRow + offsetX, sheetName);
     const columnLetter = this.getColumnLetter(headerCol + numberColumns - 1);
     return `${headerAddress}:${columnLetter}`;
   }
@@ -120,7 +125,8 @@ export class SpreadsheetService extends JDependency {
 
   private parseOtherOptions(otherOptions: ExtraOptions): ExtraOptionsGuaranteed {
     return {
-      extraOffset: otherOptions.extraOffset ?? 0,
+      offsetX: otherOptions.offsetX ?? 0,
+      offsetY: otherOptions.offsetY ?? 0,
       numberColumns: otherOptions.numberColumns ?? 1,
     };
   }

@@ -7,10 +7,10 @@ import { ExpenseReadyForUpload, ISpreadsheetInstruction } from '../../models/exp
 export class SpreadsheetInstructionBuilder extends JDependency {
   buildInstructions(expenseData: ExpenseReadyForUpload): ISpreadsheetInstruction[] {
     const moneyInstruction = {
-      sheetName: Sheet.MONEY,
+      sheetName: Sheet.Money,
       header: expenseData.source,
       data: [expenseData.amount],
-      extraOffset: 16,
+      offsetX: 16,
     };
 
     const otherInstructions = expenseData.expenseParts.map(expensePart => {
@@ -22,10 +22,10 @@ export class SpreadsheetInstructionBuilder extends JDependency {
       }
 
       return {
-        sheetName: Sheet.CURRENT,
+        sheetName: Sheet.Current,
         header: category,
         data,
-        extraOffset: getCurrentColumnOffset(category),
+        offsetX: getCurrentColumnOffset(category),
       };
     });
 

@@ -25,8 +25,8 @@ export class ExpensePipeline extends JDependency {
     // send the instructions to the spreadsheet service
     // todo batch update
     instructions.forEach(instruction => {
-      const { sheetName, header, data, extraOffset } = instruction;
-      this.spreadsheetService.addDataToColumnByHeader(sheetName, header, data, extraOffset);
+      const { sheetName, header, data, offsetX } = instruction;
+      this.spreadsheetService.addDataToColumnByHeader({ sheetName, header, data, offsetX });
     });
   }
 }

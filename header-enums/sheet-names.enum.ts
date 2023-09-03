@@ -1,4 +1,4 @@
 export enum Sheet {
-    CURRENT = 'Current',
-    MONEY = 'Money',
+    Current = 'Current',
+    Money = 'Money',
 }

@@ -45,5 +45,6 @@ export interface ISpreadsheetInstruction {
     sheetName: Sheet;
     header: CategoryOption | MoneyOption;
     data: (string | number)[];
-    extraOffset?: number | undefined;
+    offsetX?: number | undefined;
+    offsetY?: number | undefined;
 }
