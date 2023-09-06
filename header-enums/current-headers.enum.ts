@@ -9,10 +9,12 @@ export enum CategoryOption {
   Drugs = 'Drugs',
   Gift = 'Gift',
   Misc = 'Misc',
+  Split = 'Split',
+  Skip = 'Skip',
   Exit = 'Exit',
 }
 
-export function getCurrentColumnOffset(header: CategoryOption) {
+export function getCurrentColumnOffsetX(header: CategoryOption) {
   switch (header) {
   case CategoryOption.Misc: 
     return 3;

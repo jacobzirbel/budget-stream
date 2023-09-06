@@ -10,6 +10,7 @@ import { ConsoleExpenseGenerator } from './expenses/console-expense-generator';
 import { ExpensePipeline } from './expense-pipeline';
 import { ExpenseProcessor } from './expenses/expense-processor';
 import { ExpenseSplitter } from './expenses/expense-splitter';
+import { CsvExpenseGenerator } from './expenses/csv-expense-generator';
 
 export class App extends JApp {
   constructor() {
@@ -28,6 +29,7 @@ export class App extends JApp {
       { class: CategoryDeterminer, initArgs: baseArgs },
       { class: NoteGenerator, initArgs: baseArgs },
       { class: ConsoleExpenseGenerator, initArgs: baseArgs },
+      { class: CsvExpenseGenerator, initArgs: baseArgs },
       { class: ExpensePipeline, initArgs: baseArgs },
       { class: ExpenseProcessor, initArgs: baseArgs },
       { class: ExpenseSplitter, initArgs: baseArgs },

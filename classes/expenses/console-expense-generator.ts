@@ -1,6 +1,6 @@
 import { JDependency, JPrompter, validCurrency } from 'jazzapp';
 import { MoneyOption } from '../../header-enums';
-import { IExpenseGenerator, IRawExpense } from '../../models/expense.model';
+import { ExpenseDataSourceType, IExpenseGenerator, IRawExpense } from '../../models/expense.model';
 import { singleton } from 'tsyringe';
 
 @singleton()
@@ -22,7 +22,9 @@ export class ConsoleExpenseGenerator extends JDependency implements IExpenseGene
 
         const expense: IRawExpense = {
           amount,
-          context: '',
+          context: {
+            from: ExpenseDataSourceType.Console,
+          },
           source: moneySource,
         };
 

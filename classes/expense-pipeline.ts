@@ -19,14 +19,18 @@ export class ExpensePipeline extends JDependency {
     // process the data
     const processedExpense = await this.expenseProcessor.processExpense(rawExpense);
 
+    if (processedExpense === null) {
+      return;
+    }
+
     // build the instructions
     const instructions = this.spreadsheetInstructionBuilder.buildInstructions(processedExpense);
 
     // send the instructions to the spreadsheet service
     // todo batch update
+
     instructions.forEach(instruction => {
-      const { sheetName, header, data, offsetX } = instruction;
-      this.spreadsheetService.addDataToColumnByHeader({ sheetName, header, data, offsetX });
+      this.spreadsheetService.addDataToColumnByHeader(instruction);
     });
   }
 }

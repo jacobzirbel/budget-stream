@@ -2,7 +2,7 @@ import { JDependency, JPrompter, validCurrency } from 'jazzapp';
 import { IInputService } from '../interfaces/input-service.model';
 import { singleton } from 'tsyringe';
 import { SpreadsheetService } from './spreadsheets/spreadsheet-service';
-import { CategoryOption, MoneyOption, Sheet, getCurrentColumnOffset, isCredit } from '../header-enums';
+import { CategoryOption, MoneyOption, Sheet, getCurrentColumnOffsetX, isCredit } from '../header-enums';
 
 @singleton()
 export class ConsoleInput extends JDependency implements IInputService {
@@ -40,7 +40,7 @@ export class ConsoleInput extends JDependency implements IInputService {
   }
 
   async addExpense(category: CategoryOption, moneySource: MoneyOption, amount: number) {
-    const categoryOffset = getCurrentColumnOffset(category);
+    const categoryOffset = getCurrentColumnOffsetX(category);
 
     const categoryData = await this.getCategoryData(amount, category);
     const moneySourceData = await this.getMoneySourceData(amount, moneySource);

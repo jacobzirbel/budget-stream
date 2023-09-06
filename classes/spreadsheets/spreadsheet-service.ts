@@ -106,9 +106,10 @@ export class SpreadsheetService extends JDependency {
     }
 
     const headerCol = data[headerRow].findIndex(col => col === header);
-    const headerAddress = this.getCellAddress(headerCol, headerRow + offsetX, sheetName);
-    const columnLetter = this.getColumnLetter(headerCol + numberColumns - 1);
-    return `${headerAddress}:${columnLetter}`;
+    const headerAddress = this.getCellAddress(headerCol + offsetY, headerRow + offsetX + 1, sheetName);
+    const columnLetter = this.getColumnLetter(headerCol + offsetY + numberColumns - 1);
+    const r = `${headerAddress}:${columnLetter}`;
+    return r;
   }
 
   private getCellAddress(colIndex: number, rowIndex: number, sheetName = ''): string {
@@ -130,6 +131,4 @@ export class SpreadsheetService extends JDependency {
       numberColumns: otherOptions.numberColumns ?? 1,
     };
   }
-
-  destroy?: (() => void) | undefined;
 }

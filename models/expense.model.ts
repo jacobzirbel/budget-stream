@@ -1,6 +1,14 @@
 import { CategoryOption, MoneyOption, Sheet } from '../header-enums';
 
-export type ExpenseContext = string;
+export enum ExpenseDataSourceType {
+    Console,
+    Csv,
+}
+
+export interface ExpenseContext {
+    info?: string;
+    from?: ExpenseDataSourceType;
+}
 
 export interface IRawExpense {
     amount: number;

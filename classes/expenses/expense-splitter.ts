@@ -25,7 +25,7 @@ export class ExpenseSplitter extends JDependency {
 
     while (remainingAmount !== 0) {
       let amountToProcess = await this.getSubAmount(remainingAmount);
-      const category = await this.categoryDeterminer.determineCategory('test');
+      const category = await this.categoryDeterminer.determineCategory({});
 
       if (category === null) {
         throw new Error('Category is null');
