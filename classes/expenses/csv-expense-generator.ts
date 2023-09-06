@@ -63,7 +63,7 @@ export class CsvExpenseGenerator extends JDependency implements IExpenseGenerato
           resolve(results.data.map((d) => ({
             amount: +d.Amount * -1,
             description: d.Description,
-          })).filter(x => !!x.amount));
+          })).reverse().filter(x => !!x.amount));
         }
       });
     });

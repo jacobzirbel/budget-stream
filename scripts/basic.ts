@@ -4,8 +4,8 @@ import { ConsoleExpenseGenerator } from '../classes/expenses/console-expense-gen
 import { CsvExpenseGenerator } from '../classes/expenses/csv-expense-generator';
 
 new App().run(async app => {
-  // const expenseGenerator = await app.getDependency(ConsoleExpenseGenerator);
-  const expenseGenerator = await app.getDependency(CsvExpenseGenerator);
+  const expenseGenerator = await app.getDependency(ConsoleExpenseGenerator);
+  // const expenseGenerator = await app.getDependency(CsvExpenseGenerator);
   const dataPipeline = await app.getDependency(ExpensePipeline);
   
   await expenseGenerator.forEachExpense(x => {

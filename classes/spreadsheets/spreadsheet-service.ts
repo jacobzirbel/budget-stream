@@ -6,14 +6,14 @@ import { SheetsApi } from './sheets-api';
 import { ISpreadsheetInstruction } from '../../models/expense.model';
 
 interface ExtraOptions {
-  offsetX?: number;
   offsetY?: number;
+  offsetX?: number;
   numberColumns?: number;
 }
 
 interface ExtraOptionsGuaranteed {
-  offsetX: number;
   offsetY: number;
+  offsetX: number;
   numberColumns: number;
 }
 
@@ -36,30 +36,29 @@ export class SpreadsheetService extends JDependency {
   }
 
   async addDataToColumnByHeader(instruction: ISpreadsheetInstruction) {
-    const { sheetName, header, data, offsetX, offsetY } = instruction;
-    const otherOptions = { offsetX, offsetY, numberColumns: data.length };
+    const { sheetName, header, data, offsetY, offsetX, allowOverwrite } = instruction;
+    const otherOptions = { offsetY, offsetX, numberColumns: data.length };
     const columnData = await this.getColumnDataByHeader(sheetName, header, otherOptions);
     const columnRange = await this.getColumnRangeAddressByHeader(sheetName, header, otherOptions);
-    const firstEmptyRowIdx = columnData.findIndex(x => x.every(y => !y));
-    const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
-    const headerRowStr = columnRange.split('!')[1].match(/\d+/);
 
-    if (!headerRowStr) {
-      throw new Error('addDataToColumnByHeader: Header row not found!');
+    let rangeToUpdate = '';
+    if (!allowOverwrite) {
+      const firstEmptyRowIdx = columnData.findIndex(x => x.every(y => !y));
+      const rowNum = firstEmptyRowIdx === -1 ? columnData.length : firstEmptyRowIdx;
+      const headerRowNum = columnRange.split('!')[1].match(/\d+/);
+
+      if (!headerRowNum || !headerRowNum[0]) {
+        throw new Error('addDataToColumnByHeader: Header row not found!');
+      }
+
+      rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
     }
 
-    const headerRowNumStr = headerRowStr[0].match(/\d+/);
-
-    if (!headerRowNumStr) {
-      throw new Error('addDataToColumnByHeader: Header row not found!');
-    }
-
-    const headerRowNum = headerRowNumStr[0];
-    const rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
+    console.log(rangeToUpdate || columnRange);
 
     await this.service.spreadsheets.values.update({
       spreadsheetId: this.sheetId,
-      range: rangeToUpdate,
+      range: rangeToUpdate || columnRange,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: [data] }
     });
@@ -97,7 +96,7 @@ export class SpreadsheetService extends JDependency {
   }
 
   private async getColumnRangeAddressByHeader(sheetName: string, header: string, otherOptions: ExtraOptions): Promise<string> {
-    const { offsetX, offsetY, numberColumns } = this.parseOtherOptions(otherOptions);
+    const { offsetY, offsetX, numberColumns } = this.parseOtherOptions(otherOptions);
     const data = await this.getFullSheetData(sheetName);
     const headerRow = data.findIndex(row => row.includes(header));
 
@@ -106,8 +105,8 @@ export class SpreadsheetService extends JDependency {
     }
 
     const headerCol = data[headerRow].findIndex(col => col === header);
-    const headerAddress = this.getCellAddress(headerCol + offsetY, headerRow + offsetX + 1, sheetName);
-    const columnLetter = this.getColumnLetter(headerCol + offsetY + numberColumns - 1);
+    const headerAddress = this.getCellAddress(headerCol + offsetX, headerRow + offsetY + 1, sheetName);
+    const columnLetter = this.getColumnLetter(headerCol + offsetX + numberColumns - 1);
     const r = `${headerAddress}:${columnLetter}`;
     return r;
   }
@@ -126,8 +125,8 @@ export class SpreadsheetService extends JDependency {
 
   private parseOtherOptions(otherOptions: ExtraOptions): ExtraOptionsGuaranteed {
     return {
-      offsetX: otherOptions.offsetX ?? 0,
       offsetY: otherOptions.offsetY ?? 0,
+      offsetX: otherOptions.offsetX ?? 0,
       numberColumns: otherOptions.numberColumns ?? 1,
     };
   }

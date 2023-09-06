@@ -14,7 +14,7 @@ export enum CategoryOption {
   Exit = 'Exit',
 }
 
-export function getCurrentColumnOffsetX(header: CategoryOption) {
+export function getCurrentColumnOffsetY(header: CategoryOption) {
   switch (header) {
   case CategoryOption.Misc: 
     return 3;

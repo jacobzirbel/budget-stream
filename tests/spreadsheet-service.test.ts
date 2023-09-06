@@ -51,34 +51,34 @@ describe('SpreadsheetService', () => {
     expect(table[4][2]).toEqual('UPDATED');
   });
 
-  test('should update column with offsetX 1', async () => {
+  test('should update column with offsetY 1', async () => {
     const instruction = {
       sheetName: 'Test' as any,
       header: 'Header2' as any,
       data: ['UPDATED1'],
-      offsetX: 1,
+      offsetY: 1,
     };
     await spreadsheetService.addDataToColumnByHeader(instruction);
     expect(table[4][2]).toEqual('UPDATED1');
   });
 
-  test('should update column with offsetX 2', async () => {
+  test('should update column with offsetY 2', async () => {
     const instruction = {
       sheetName: 'Test' as any,
       header: 'Header2' as any,
       data: ['UPDATED3'],
-      offsetX: 3,
+      offsetY: 3,
     };
     await spreadsheetService.addDataToColumnByHeader(instruction);
     expect(table[6][2]).toEqual('UPDATED3');
   });
 
-  test('should update column with offsetY -1', async () => {
+  test('should update column with offsetX -1', async () => {
     const instruction = {
       sheetName: 'Test' as any,
       header: 'Header2' as any,
       data: ['UPDATED4', 'Second'],
-      offsetY: -1,
+      offsetX: -1,
     };
     await spreadsheetService.addDataToColumnByHeader(instruction);
 
@@ -86,12 +86,25 @@ describe('SpreadsheetService', () => {
     expect(table[6][2]).toEqual('Second');
   });
 
+  test.only('should allow overwrite', async () => {
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED5'],
+      offsetY: -2,
+      allowOverwrite: true,
+    };
+    await spreadsheetService.addDataToColumnByHeader(instruction);
+
+    expect(table[1][2]).toEqual('UPDATED5');
+  });
+
   test('should update two columns', async () => {
     const instruction = {
       sheetName: 'Test' as any,
       header: 'Header1' as any,
       data: ['FIRST', 'SECOND'],
-      offsetX: 3,
+      offsetY: 3,
     };
 
     await spreadsheetService.addDataToColumnByHeader(instruction);

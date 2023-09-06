@@ -1,6 +1,6 @@
 import { JDependency } from 'jazzapp';
 import { singleton } from 'tsyringe';
-import { CategoryOption, Sheet, getCurrentColumnOffsetX } from '../../header-enums';
+import { CategoryOption, Sheet, getCurrentColumnOffsetY } from '../../header-enums';
 import { ExpenseReadyForUpload, ISpreadsheetInstruction } from '../../models/expense.model';
 
 @singleton()
@@ -10,7 +10,7 @@ export class SpreadsheetInstructionBuilder extends JDependency {
       sheetName: Sheet.Money,
       header: expenseData.source,
       data: [expenseData.amount],
-      offsetX: 16,
+      offsetY: 16,
     };
 
     const otherInstructions = expenseData.expenseParts.map(expensePart => {
@@ -25,8 +25,8 @@ export class SpreadsheetInstructionBuilder extends JDependency {
         sheetName: Sheet.Current,
         header: category,
         data,
-        offsetX: getCurrentColumnOffsetX(category),
-        offsetY: category === CategoryOption.Phone ? -1 : 0,
+        offsetY: getCurrentColumnOffsetY(category),
+        offsetX: category === CategoryOption.Phone ? -1 : 0,
       };
       return instruction;
     });
