@@ -21,6 +21,7 @@ interface ExtraOptionsGuaranteed {
 export class SpreadsheetService extends JDependency {
   private sheetId: string;
   private service: sheets_v4.Sheets;
+  private instructionQueue: ISpreadsheetInstruction[] = [];
 
   constructor(private sheetsApi: SheetsApi, private utils: JUtilities) {
     super();
@@ -35,9 +36,28 @@ export class SpreadsheetService extends JDependency {
     return this;
   }
 
-  async addDataToColumnByHeader(instruction: ISpreadsheetInstruction) {
+  addDataToColumnByHeaderQueue(instructions: ISpreadsheetInstruction[]) {
+    this.instructionQueue.push(...instructions);
+    this.checkQueue();
+  }
+
+  private async checkQueue() {
+    if (this.instructionQueue.length > 0) {
+      const instruction = this.instructionQueue.shift();
+      if (instruction) {
+        await this.addDataToColumnByHeader(instruction);
+      }
+    }
+  }
+
+  private async addDataToColumnByHeader(instruction: ISpreadsheetInstruction) {
     const { sheetName, header, data, offsetY, offsetX, allowOverwrite } = instruction;
     const otherOptions = { offsetY, offsetX, numberColumns: data.length };
+
+    if (allowOverwrite && !offsetY && !offsetX) {
+      throw new Error('addDataToColumnByHeader: allowOverwrite is true but no offset is provided');
+    }
+
     const columnData = await this.getColumnDataByHeader(sheetName, header, otherOptions);
     const columnRange = await this.getColumnRangeAddressByHeader(sheetName, header, otherOptions);
 
@@ -53,8 +73,6 @@ export class SpreadsheetService extends JDependency {
 
       rangeToUpdate = columnRange.replace(/(![A-Za-z]+)\d+(:[A-Za-z]+)/, `$1${+headerRowNum + +rowNum}$2`);
     }
-
-    console.log(rangeToUpdate || columnRange);
 
     await this.service.spreadsheets.values.update({
       spreadsheetId: this.sheetId,
@@ -105,7 +123,7 @@ export class SpreadsheetService extends JDependency {
     }
 
     const headerCol = data[headerRow].findIndex(col => col === header);
-    const headerAddress = this.getCellAddress(headerCol + offsetX, headerRow + offsetY + 1, sheetName);
+    const headerAddress = this.getCellAddress(headerCol + offsetX, headerRow + offsetY, sheetName);
     const columnLetter = this.getColumnLetter(headerCol + offsetX + numberColumns - 1);
     const r = `${headerAddress}:${columnLetter}`;
     return r;

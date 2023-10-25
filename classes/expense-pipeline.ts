@@ -27,10 +27,6 @@ export class ExpensePipeline extends JDependency {
     const instructions = this.spreadsheetInstructionBuilder.buildInstructions(processedExpense);
 
     // send the instructions to the spreadsheet service
-    // todo batch update
-
-    instructions.forEach(instruction => {
-      this.spreadsheetService.addDataToColumnByHeader(instruction);
-    });
+    this.spreadsheetService.addDataToColumnByHeaderQueue(instructions);
   }
 }

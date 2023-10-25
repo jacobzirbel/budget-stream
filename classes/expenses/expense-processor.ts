@@ -20,7 +20,7 @@ export class ExpenseProcessor extends JDependency {
   async processExpense(rawExpense: IRawExpense): Promise<ExpenseReadyForUpload | null> {
     let expenseParts: ExpensePartWithNote[];
 
-    const category = await this.categoryDeterminer.determineCategory(rawExpense.context);
+    const category = await this.categoryDeterminer.determineCategory(rawExpense);
 
     if (category === CategoryOption.Split) {
       expenseParts = await this.splitExpense(rawExpense);
@@ -30,7 +30,7 @@ export class ExpenseProcessor extends JDependency {
       const x = await this.noteGenerator.generateNote({
         amount: rawExpense.amount,
         category,
-      });
+      }, rawExpense.context);
       expenseParts = [x];
     }
 
@@ -48,7 +48,7 @@ export class ExpenseProcessor extends JDependency {
     while (remainingAmount !== 0) {
       const amountToProcess = await this.getSubAmount(remainingAmount);
       remainingAmount -= amountToProcess;
-      const category = await this.categoryDeterminer.determineCategory({});
+      const category = await this.categoryDeterminer.determineCategory(rawExpense);
 
       if (category === null) {
         throw new Error('Category is null');

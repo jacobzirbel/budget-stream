@@ -7,3 +7,7 @@ themoney-4567-4a7e835e50dd.json
 .vscode/
 coverage/
 csvs/
+.DS_Store
+classes/expenses/category-determiner.ts
+config/category-config.ts
+config/note-config.ts

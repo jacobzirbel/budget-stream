@@ -2,7 +2,7 @@ import { JDependency, JPrompter } from 'jazzapp';
 import { CategoryOption } from '../../header-enums';
 import { ExpenseContext, ExpenseDataSourceType, IRawExpense } from '../../models/expense.model';
 import { singleton } from 'tsyringe';
-import { info } from 'console';
+import { categoryConfig } from '../../config/category-config';
 
 @singleton()
 export class CategoryDeterminer extends JDependency {
@@ -28,16 +28,14 @@ export class CategoryDeterminer extends JDependency {
     super();
   }
 
-  async determineCategory(context: ExpenseContext): Promise<CategoryOption> {
-    this.displayRelevantContext(context);
+  async determineCategory(expense: IRawExpense): Promise<CategoryOption> {
+    this.displayRelevantContext(expense);
     let category: CategoryOption | null = null;
 
-    if (context.from === ExpenseDataSourceType.Csv) {
-      category = await this.determineCategoryByContext(context);
-      if (category) {
-        console.info(`Inferred category: ${category}`);
-        return category;
-      }
+    category = await this.determineCategoryByContext(expense.context);
+    if (category) {
+      console.info(`Inferred category: ${category}`);
+      return category;
     }
 
     category = await this.getCategoryFromConsole();
@@ -52,17 +50,20 @@ export class CategoryDeterminer extends JDependency {
 
   private async determineCategoryByContext(context: ExpenseContext): Promise<CategoryOption | null> {
     let category = null;
-
-    if (context.info?.includes('amazon')) {
-      category = CategoryOption.Misc;
+    const infoUpper = context.info?.toUpperCase();
+    for (const entry of categoryConfig) {
+      if (entry.keywords.some(keyword => infoUpper?.includes(keyword.toUpperCase()))) {
+        category = entry.category;
+        break;
+      }
     }
 
     return category;
   }
 
-  private displayRelevantContext(context: ExpenseContext) {
-    if (context.from === ExpenseDataSourceType.Csv) {
-      console.info(context.info);
+  private displayRelevantContext(expense: IRawExpense) {
+    if (expense.context.from === ExpenseDataSourceType.Csv) {
+      console.info(expense.context.info, expense.amount);
     }
   }
 }

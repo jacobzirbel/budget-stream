@@ -47,7 +47,7 @@ describe('SpreadsheetService', () => {
       header: 'Header2' as any,
       data: ['UPDATED'],
     };
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[4][2]).toEqual('UPDATED');
   });
 
@@ -58,7 +58,7 @@ describe('SpreadsheetService', () => {
       data: ['UPDATED1'],
       offsetY: 1,
     };
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[4][2]).toEqual('UPDATED1');
   });
 
@@ -69,7 +69,7 @@ describe('SpreadsheetService', () => {
       data: ['UPDATED3'],
       offsetY: 3,
     };
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[6][2]).toEqual('UPDATED3');
   });
 
@@ -80,21 +80,21 @@ describe('SpreadsheetService', () => {
       data: ['UPDATED4', 'Second'],
       offsetX: -1,
     };
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
 
     expect(table[6][1]).toEqual('UPDATED4');
     expect(table[6][2]).toEqual('Second');
   });
 
-  test.only('should allow overwrite', async () => {
+  test('should allow overwrite', async () => {
     const instruction = {
       sheetName: 'Test' as any,
       header: 'Header2' as any,
       data: ['UPDATED5'],
-      offsetY: -2,
+      offsetY: -1,
       allowOverwrite: true,
     };
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
 
     expect(table[1][2]).toEqual('UPDATED5');
   });
@@ -107,7 +107,7 @@ describe('SpreadsheetService', () => {
       offsetY: 3,
     };
 
-    await spreadsheetService.addDataToColumnByHeader(instruction);
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[6][1]).toEqual('FIRST');
     expect(table[6][2]).toEqual('SECOND');
   });

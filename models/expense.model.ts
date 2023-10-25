@@ -8,6 +8,7 @@ export enum ExpenseDataSourceType {
 export interface ExpenseContext {
     info?: string;
     from?: ExpenseDataSourceType;
+    amount?: number;
 }
 
 export interface IRawExpense {

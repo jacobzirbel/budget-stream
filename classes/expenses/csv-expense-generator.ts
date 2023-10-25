@@ -8,7 +8,7 @@ import * as Papa from 'papaparse';
 @singleton()
 export class CsvExpenseGenerator extends JDependency implements IExpenseGenerator {
   constructor(
-        private prompter: JPrompter,
+    private prompter: JPrompter,
   ) {
     super();
   }
@@ -17,6 +17,13 @@ export class CsvExpenseGenerator extends JDependency implements IExpenseGenerato
     const filePath = await this.selectFile();
     const moneySource = await this.getMoneySource(filePath);
     const csvExpenses = await this.getCsvContents(filePath);
+    const isValidAmount = await this.validateAmount(csvExpenses);
+
+    if (!isValidAmount) {
+      console.info('Invalid amount. Exiting.')
+      return;
+    }
+
     for (const csvExpense of csvExpenses) {
       const expense: IRawExpense = {
         amount: csvExpense.amount,
@@ -26,10 +33,7 @@ export class CsvExpenseGenerator extends JDependency implements IExpenseGenerato
         },
         source: moneySource,
       };
-      const shouldSkip = await this.prompter.yn(`Skip ${csvExpense.amount} - ${csvExpense.description}?`, false);
-      if (!shouldSkip) {
-        await callback(expense);
-      }
+      await callback(expense);
     }
   }
 
@@ -63,19 +67,29 @@ export class CsvExpenseGenerator extends JDependency implements IExpenseGenerato
           resolve(results.data.map((d) => ({
             amount: +d.Amount * -1,
             description: d.Description,
-          })).reverse().filter(x => !!x.amount));
+            transactionDate: d['Transaction Date'],
+          }))
+            .sort((a, b) => new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime())
+            .filter(x => !!x.amount));
         }
       });
     });
   }
+
+  validateAmount(expenses: RawCsvExpense[]): Promise<boolean> {
+    const totalAmount = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+    return this.prompter.yn(`Total amount: ${totalAmount}. Is this correct?`, true);
+  }
 }
 
 interface RawCsvExpense {
-    amount: number;
-    description: string;
+  amount: number;
+  description: string;
+  transactionDate: string;
 }
 
 interface CsvExpense {
-    Amount: number;
-    Description: string;
+  'Transaction Date': string;
+  Amount: number;
+  Description: string;
 }
