@@ -1,18 +1,9 @@
-import { get } from 'http';
-import { SpreadsheetService } from '../classes/spreadsheet-service';
+import { SpreadsheetService } from '../classes/spreadsheets/spreadsheet-service';
+import { ISpreadsheetInstruction } from '../models/expense.model';
 
 describe('SpreadsheetService', () => {
   let spreadsheetService: SpreadsheetService;
-  let apiService: {
-    getService: () => {
-      spreadsheets: {
-        values: {
-          get: (arg0: { spreadsheetId: string; range: string; }) => Promise<any>;
-          update: (arg0: { spreadsheetId: string; range: string; valueInputOption: string; requestBody: { values: string[][]; }; }) => Promise<any>;
-        };
-      };
-    };
-  };
+  let apiService: ApiService;
   let mockUtils: any;
   let table: any;
 
@@ -34,7 +25,7 @@ describe('SpreadsheetService', () => {
   });
 
   test('should get sheet data', async () => {
-    const data = await spreadsheetService.getFullSheetData('Test');
+    const data = await (spreadsheetService as any).getFullSheetData('Test');
 
     expect(data).toEqual([
       ['', 'nothing', '', 'random'],
@@ -51,38 +42,88 @@ describe('SpreadsheetService', () => {
   });
 
   test('should update column', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED']);
+    const instruction: ISpreadsheetInstruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED'],
+    };
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[4][2]).toEqual('UPDATED');
   });
 
-  test('should update column with offset 1', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED1'], 1);
+  test('should update column with offsetY 1', async () => {
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED1'],
+      offsetY: 1,
+    };
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[4][2]).toEqual('UPDATED1');
   });
 
-  test('should update column with offset 2', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header2', ['UPDATED3'], 3);
+  test('should update column with offsetY 2', async () => {
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED3'],
+      offsetY: 3,
+    };
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[6][2]).toEqual('UPDATED3');
   });
 
+  test('should update column with offsetX -1', async () => {
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED4', 'Second'],
+      offsetX: -1,
+    };
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
+
+    expect(table[6][1]).toEqual('UPDATED4');
+    expect(table[6][2]).toEqual('Second');
+  });
+
+  test('should allow overwrite', async () => {
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header2' as any,
+      data: ['UPDATED5'],
+      offsetY: -1,
+      allowOverwrite: true,
+    };
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
+
+    expect(table[1][2]).toEqual('UPDATED5');
+  });
+
   test('should update two columns', async () => {
-    await spreadsheetService.addDataToColumnByHeader('Test', 'Header1', ['FIRST', 'SECOND'], 3);
+    const instruction = {
+      sheetName: 'Test' as any,
+      header: 'Header1' as any,
+      data: ['FIRST', 'SECOND'],
+      offsetY: 3,
+    };
+
+    await (spreadsheetService as any).addDataToColumnByHeader(instruction);
     expect(table[6][1]).toEqual('FIRST');
     expect(table[6][2]).toEqual('SECOND');
   });
 });
 
 const TABLE: [string | null, string | null, string | null, string | null][] = [
-  [null, 'nothing', null, 'random'], // 0
-  ['1', '2', '3', '4'], // 1
-  [null, 'Header1', 'Header2', 'Header3'], // 2
-  [null, '1', '2', '3'], // 3
-  [null, '11', null, '33'], // 4
-  [null, '111', '222', '333'], // 5
-  [null, null, null, null], // 6 
-  [null, null, null, null], // 7 
-  [null, '1111', '2222', '3333'], // 8
-  [null, null, null, null], // 9
+  /* 0 */['',/* */'nothing',/**/'',/*       */'random'],
+  /* 1 */['1',/**/'2',/*      */'3',/*      */'4'],
+  /* 2 */['',/* */'Header1',/**/'Header2',/**/'Header3'],
+  /* 3 */['',/* */'1',/*      */'2',/*      */'3'],
+  /* 4 */['',/* */'11',/*     */'',/*       */'33'],
+  /* 5 */['',/* */'111',/*    */'222',/*    */'333'],
+  /* 6 */['',/* */'',/*       */'',/*       */''],
+  /* 7 */['',/* */'',/*       */'',/*       */''],
+  /* 8 */['',/* */'1111',/*  */'2222',/*   */'3333'],
+  /* 9 */['',/* */'',/*       */'',/*       */''],
 ];
 
 function getService(table: string[][]) {
@@ -214,3 +255,14 @@ describe('TestHelpers', () => {
     ]);
   });
 });
+
+interface ApiService {
+  getService: () => {
+    spreadsheets: {
+      values: {
+        get: (arg0: { spreadsheetId: string; range: string; }) => Promise<any>;
+        update: (arg0: { spreadsheetId: string; range: string; valueInputOption: string; requestBody: { values: string[][]; }; }) => Promise<any>;
+      };
+    };
+  };
+}

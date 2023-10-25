@@ -7,16 +7,19 @@
     "test": "jest --watch",
     "ju": "npm install jazzapp@latest",
     "build": "tsc -p .",
-    "tester": "ts-node scripts/tester.ts",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint-fix": "eslint . --ext .ts --fix",
+    "tester": "ts-node scripts/tester.ts",
+    "basic": "ts-node scripts/basic.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
+    "@types/papaparse": "^5.3.8",
     "googleapis": "^105.0.0",
-    "jazzapp": "^0.1.25"
+    "jazzapp": "^0.1.28",
+    "papaparse": "^5.4.1"
   },
   "devDependencies": {
     "@types/jest": "^29.2.0",
