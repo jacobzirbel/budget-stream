@@ -22,6 +22,7 @@ export class SpreadsheetService extends JDependency {
   private sheetId: string;
   private service: sheets_v4.Sheets;
   private instructionQueue: ISpreadsheetInstruction[] = [];
+  private queueLock = false;
 
   constructor(private sheetsApi: SheetsApi, private utils: JUtilities) {
     super();
@@ -42,12 +43,17 @@ export class SpreadsheetService extends JDependency {
   }
 
   private async checkQueue() {
+    if (this.queueLock) return;
+    this.queueLock = true;
     if (this.instructionQueue.length > 0) {
       const instruction = this.instructionQueue.shift();
       if (instruction) {
         await this.addDataToColumnByHeader(instruction);
       }
+      this.queueLock = false;
+      this.checkQueue();
     }
+    this.queueLock = false;
   }
 
   private async addDataToColumnByHeader(instruction: ISpreadsheetInstruction) {

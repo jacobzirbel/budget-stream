@@ -44,8 +44,8 @@ export class ConsoleInput extends JDependency implements IInputService {
 
     const categoryData = await this.getCategoryData(amount, category);
     const moneySourceData = await this.getMoneySourceData(amount, moneySource);
-    this.spreadsheetService.addDataToColumnByHeader({ sheetName: Sheet.Current, header: category, data: categoryData, offsetY: categoryOffset });
-    this.spreadsheetService.addDataToColumnByHeader({ sheetName: Sheet.Money, header: moneySource, data: moneySourceData, offsetY: 16 });
+    // this.spreadsheetService.addDataToColumnByHeader({ sheetName: Sheet.Current, header: category, data: categoryData, offsetY: categoryOffset });
+    // this.spreadsheetService.addDataToColumnByHeader({ sheetName: Sheet.Money, header: moneySource, data: moneySourceData, offsetY: 16 });
   }
 
   async getMoneySource() {

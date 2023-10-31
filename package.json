@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "tester": "ts-node scripts/tester.ts",
-    "basic": "ts-node scripts/basic.ts"
+    "basic": "ts-node scripts/basic.ts",
+    "start": "ts-node scripts/main.ts"
   },
   "author": "",
   "license": "ISC",

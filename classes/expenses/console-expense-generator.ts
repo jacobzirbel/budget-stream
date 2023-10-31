@@ -14,11 +14,14 @@ export class ConsoleExpenseGenerator extends JDependency implements IExpenseGene
   async forEachExpense(callback: (expense: IRawExpense) => Promise<void>): Promise<void> {
     while (true) {
       const moneySource = await this.getMoneySourceFromConsole();
-      if (!moneySource) break;
+      if (!moneySource || moneySource === MoneyOption.Exit) return;
 
       while (true) {
         const amount = await this.getAmountFromConsole(moneySource);
-        if (!amount) break;
+        if (!amount) {
+          console.log('no amount, exiting');
+          return;
+        }
 
         const expense: IRawExpense = {
           amount,
