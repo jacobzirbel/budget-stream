@@ -11,6 +11,16 @@ export enum MoneyOption {
   Discover = 'Discover',
   Prime = 'Prime',
   Other = 'Other',
+  SRoth = 'SRoth',
+  STrad = 'STrad',
+  SSave = 'SSave',
+  Baird = 'Baird',
+  Four = '401k',
+  HSA = 'HSA',
+  Crypto = 'Crypto',
+  Treasury = 'Treasury',
+  Metal = 'Metal',
+  House = 'House',
   Exit = 'Exit',
 }
 

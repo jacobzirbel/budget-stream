@@ -11,6 +11,7 @@ import { ExpensePipeline } from './expense-pipeline';
 import { ExpenseProcessor } from './expenses/expense-processor';
 import { ExpenseSplitter } from './expenses/expense-splitter';
 import { CsvExpenseGenerator } from './expenses/csv-expense-generator';
+import { RetirementInput } from './retirement-input';
 
 export class App extends JApp {
   constructor() {
@@ -33,6 +34,7 @@ export class App extends JApp {
       { class: ExpensePipeline, initArgs: baseArgs },
       { class: ExpenseProcessor, initArgs: baseArgs },
       { class: ExpenseSplitter, initArgs: baseArgs },
+      { class: RetirementInput, initArgs: baseArgs }
     ];
 
     this.registerDependencies(this.extendedDependencies);
