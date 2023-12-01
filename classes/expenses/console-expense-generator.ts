@@ -19,7 +19,7 @@ export class ConsoleExpenseGenerator extends JDependency implements IExpenseGene
       while (true) {
         const amount = await this.getAmountFromConsole(moneySource);
         if (!amount) {
-          console.log('no amount, exiting');
+          console.info('no amount, exiting');
           return;
         }
 

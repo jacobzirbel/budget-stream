@@ -15,9 +15,9 @@ export class CsvExpenseGenerator extends JDependency implements IExpenseGenerato
 
   async forEachExpense(callback: (expense: IRawExpense) => Promise<void>): Promise<void> {
     const filePath = await this.selectFile();
-    const moneySource = await this.getMoneySource(filePath);
     const csvExpenses = await this.getCsvContents(filePath);
     const isValidAmount = await this.validateAmount(csvExpenses);
+    const moneySource = await this.getMoneySource(filePath);
 
     if (!isValidAmount) {
       console.info('Invalid amount. Exiting.')

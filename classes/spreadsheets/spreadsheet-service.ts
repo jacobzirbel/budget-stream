@@ -48,7 +48,9 @@ export class SpreadsheetService extends JDependency {
     if (this.instructionQueue.length > 0) {
       const instruction = this.instructionQueue.shift();
       if (instruction) {
-        await this.addDataToColumnByHeader(instruction);
+        await this.addDataToColumnByHeader(instruction).catch(e => {
+          console.error(e);
+        });
       }
       this.queueLock = false;
       this.checkQueue();
